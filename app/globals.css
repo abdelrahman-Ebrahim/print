@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+@layer base {
+
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 300;
+    src: url('/fonts/Rubik-Light.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 400;
+    src: url('/fonts/Rubik-Regular.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 500;
+    src: url('/fonts/Rubik-Medium.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 600;
+    src: url('/fonts/Rubik-SemiBold.ttf') format('truetype');
+  }
+
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 700;
+    src: url('/fonts/Rubik-Bold.ttf') format('truetype');
+  }
+  
+  @font-face {
+    font-family: 'Rubik';
+    font-weight: 800;
+    src: url('/fonts/Rubik-ExtraBold.ttf') format('truetype');
+  }
+  
+}
+
+/* General Tailwind Classes Rules */
+
+@theme {
+  --breakpoint-xlg: 1920px;
+  --shadow-navbar: 0px 4px 4px 0px #0000000d;
+  --shadow-info: 0px 3.68px 3.68px 0px #7745A21A;
+  --shadow-item: 0px 0.53px 0.53px 0px #00000040 inset;
+  --shadow-button: 0px 0.79px 1.05px 0px #00000040;
+  --shadow-form: 0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A;
+  --font-rubik: "Rubik", "sans-serif";
+}
+
+
+.general-container {
+  @apply px-[320px];
+}
+
+.flex-center {
+  @apply flex justify-center items-center;
+}
