@@ -3,7 +3,7 @@ import React from 'react'
 
 const Features = () => {
     return (
-        <section className='general-container flex-center py-20 flex flex-col gap-[45px] w-full'>
+        <section className='general-container py-20 flex-col gap-[45px] w-full hidden lg:flex-center'>
             <h6 className='text-[#7745A2] uppercase font-semibold text-sm'>features</h6>
             <div className='flex items-start gap-[186px]'>
                 <div className='flex flex-col items-center gap-[21.07px]'>
