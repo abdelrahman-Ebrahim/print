@@ -54,7 +54,7 @@
 
 
 .general-container {
-  @apply px-[320px];
+  @apply px-4 xl:px-[160px] xlg:!px-[320px];
 }
 
 .flex-center {
