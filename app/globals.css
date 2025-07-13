@@ -45,6 +45,7 @@
 @theme {
   --breakpoint-xlg: 1920px;
   --shadow-navbar: 0px 4px 4px 0px #0000000d;
+  --shadow-hero: 0px 22.69px 45.38px -10.89px #00000040;
   --shadow-info: 0px 3.68px 3.68px 0px #7745A21A;
   --shadow-item: 0px 0.53px 0.53px 0px #00000040 inset;
   --shadow-button: 0px 0.79px 1.05px 0px #00000040;
@@ -60,3 +61,5 @@
 .flex-center {
   @apply flex justify-center items-center;
 }
+
+
