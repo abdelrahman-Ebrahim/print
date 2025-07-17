@@ -30,8 +30,8 @@ const Footer = () => {
                 </div>
                 <hr className='text-[#0000001A] w-[90%] self-center ' />
                 <div className='flex-center gap-10'>
-                    <Link href={"/"} className='underline text-sm text-[#141219] lg:text-[18px]'>Terms & Condition</Link>
-                    <Link href={"/"} className='underline text-sm text-[#141219] lg:text-[18px]'>Privacy policy</Link>
+                    <Link href={"/terms&conditions"} className='underline text-sm text-[#141219] lg:text-[18px]'>Terms & Condition</Link>
+                    <Link href={"/privacypolicy"} className='underline text-sm text-[#141219] lg:text-[18px]'>Privacy policy</Link>
                 </div>
             </div>
         </footer>

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
   title: "Print",
@@ -20,7 +22,10 @@ export default function RootLayout({
         suppressHydrationWarning
         className={`antialiased font-rubik`}
       >
+        <Navbar />
+
         {children}
+        <Footer />
       </body>
     </html>
   );
