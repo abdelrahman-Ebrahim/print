@@ -1,0 +1,114 @@
+{
+  "Navbar": {
+    "home": "Home",
+    "about": "About",
+    "features": "Features",
+    "faqs": "FAQs",
+    "contact": "Contact",
+    "join": "Join as a service provider",
+    "lang": "ar"
+  },
+ 
+  "Hero": {
+    "title1": "Print Anywhere",
+    "title2": "Anytime",
+    "title3": "Direct",
+    "title4": "from Your Phone",
+    "subtitleMobile": "The Easiest Way to Print Documents in Saudi Arabia",
+    "subtitleDesktop1": "The Easiest Way to Print Documents in Saudi Arabia,",
+    "subtitleDesktop2": "Get your documents printed, customized, and delivered all from your phone. Connect with trusted printing agents near you in seconds.",
+    "appStoreAlt": "Download on App Store",
+    "playStoreAlt": "Get it on Google Play",
+    "imageAlt": "Hero image showing printing service",
+    "rocketAlt": "Fast delivery icon",
+    "fastService": "Fast Print & Delivery Service",
+    "uploadAlt": "File upload icon",
+    "easyUpload": "Easy File Upload"
+  },
+  "About": {
+    "section": "about",
+    "headline": "Print Smarter. Live Simpler.",
+    "intro": "Print.sa was built to solve a simple problem — getting documents printed shouldn’t be complicated.",
+    "desc1": "Whether you’re a student rushing to submit a project, a business needing high-volume documents, or someone printing from home — Print.sa gives you control, speed, and peace of mind.",
+    "desc2": "From file upload to delivery, every step is designed to be simple, secure, and fast. We connect you with certified printing agents across Saudi Arabia, offer full customization, and make it easy to choose the best price for your needs."
+  },
+  "Info": {
+    "agents": "Print Agents",
+    "cities": "Cities Covered",
+    "documents": "Documents Printed",
+    "files": "Printed Files",
+    "users": "Active Users"
+  },
+  "Features": {
+    "section": "features",
+    "feature1_title": "Upload files in seconds",
+    "feature1_desc": "Select from your phone.",
+    "feature2_title": "Set your print options",
+    "feature2_desc": "Adjust settings to fit your needs.",
+    "feature3_title": "Find nearby agents instantly",
+    "feature3_desc": "Compare and pick the best price.",
+    "feature4_title": "Choose Delivery or pickup",
+    "feature4_desc": "We'll bring it or you collect."
+  },
+    "Options": {
+    "title1": "All Your",
+    "title2": "Printing Options",
+    "title3": "In One Place",
+    "description1": "Print.sa gives you complete control over how your",
+    "description2": "documents are printed. From size and color to layout,",
+    "description3": "sides, and binding — every detail is in your hands.",
+    "imageAlt": "iPhone showing printing options"
+  },
+ 
+  "FAQs": {
+    "sectionTitle": "FAQs",
+    "mainTitle1": "Frequently asked",
+    "mainTitle2": "questions",
+    "subtitle": "Got questions about files, delivery, or pricing? We've got you.",
+    "q1": "What are pickup points?",
+    "a1": "They are points set to enable the customers to get their prints for free. A message will be sent to the customers' mobile to inform them that their order is ready in the pickup points.",
+    "q2": "What are the available payment methods?",
+    "a2": "Online payment by credit card \"Visa or MasterCard\".\n\nDirect payment through Bank Cards that are supported by Mada service and have three numbers in the back which is called CVV or CVC.",
+    "q3": "Who is service provider in Print Platform?",
+    "a3": "Service Provider is someone who provide printing services and receive printing orders from Print Platform so he print it with his prices that may differ from Print Platform Prices.",
+    "q4": "What is the acceptable form of the document to complete the printing process?",
+    "a4": "The accepted document is pdf, and you can convert many formats to pdf from your own device such as the known formats for Word and PowerPoint \"docx, doc, ppt, pptx\".",
+    "q5": "Can I cancel the printing order and when?",
+    "a5": "Yes, if you want to cancel the order you can cancel it as long as the status of the order is \"pending\" by clicking on the icon X in front of the order in the page \"my orders\". However, if the order status changed to \"under processing\", it is printing and cannot be canceled.",
+    "q6": "Does Print platform offer cash on delivery?",
+    "a6": "Unfortunately the payment cannot be cash on delivery. It is always before completing the whole printing order."
+  },
+    "Contact": {
+    "title": "Contact Us",
+    "heading1": "Our team is ready to",
+    "heading2": "support you",
+    "email": "support@print.sa",
+    "emailAlt": "Email icon",
+    "sayHello": "say hello",
+    "phone": "(+966) 599139318",
+    "phoneAlt": "Phone icon",
+    "callNow": "call now",
+    "formName": "Name",
+    "namePlaceholder": "Your name...",
+    "formPhone": "Phone Number",
+    "phonePlaceholder": "Type phone number...",
+    "formEmail": "Email Address",
+    "emailPlaceholder": "Your email...",
+    "formMessage": "Message",
+    "messagePlaceholder": "Type your message...",
+    "sendButton": "Send",
+    "arrowAlt": "Send arrow"
+  },
+  "Footer": {
+ 
+    "description1": "Get your documents printed, customized,",
+    "description2": "and delivered all from your phone.",
+    "appStoreAlt": "Download on App Store",
+    "playStoreAlt": "Get it on Google Play",
+    "copyright": "©Print.sa 2025 All Rights Reserved.",
+    "terms": "Terms & Conditions",
+    "privacy": "Privacy Policy"
+  }
+}
+ 
+ 
