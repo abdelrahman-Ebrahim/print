@@ -94,10 +94,10 @@ const Contact = () => {
                                 </div>
                             </div>
 
-                            <div className='bg-[#ECECEC] py-[2.73px] pl-[2.73px] pr-[10.91px] rounded-[49.47px] shadow-item w-fit self-center lg:py-[3.95px] lg:pr-[15.79px] lg:pl-[3.95px] lg:rounded-[71.6px] lg:self-start'>
+                            <div className='bg-[#ECECEC] py-[2.73px] ps-[2.73px] pe-[10.91px] rounded-[49.47px] shadow-item w-fit self-center lg:py-[3.95px] lg:pe-[15.79px] lg:ps-[3.95px] lg:rounded-[71.6px] lg:self-start'>
                                 <button className={`flex items-center gap-[6.37px] lg:gap-[9.21px] cursor-pointer ${locale === 'ar' ? 'flex-row-reverse' : ''
                                     }`}>
-                                    <div className='bg-[#7745A2] px-[29.02px] py-[9.09px] rounded-[18.19px] shadow-button lg:px-[42px] lg:py-[13.16px] lg:rounded-[26.23px]'>
+                                    <div className={`bg-[#7745A2] px-[29.02px] py-[9.09px] rounded-[18.19px] shadow-button lg:px-[42px] lg:py-[13.16px] lg:rounded-[26.23px] ${locale === "ar" ? "order-2" : "order-1"}`}>
                                         <p className='font-medium text-white text-[10.91px] lg:text-base'>
                                             {t('sendButton')}
                                         </p>
@@ -107,7 +107,7 @@ const Contact = () => {
                                         alt={t('arrowAlt')}
                                         width={24}
                                         height={24}
-                                        className={`w-[14px] h-[14px] lg:w-[24px] lg:h-[24px] ${locale === 'ar' ? 'transform rotate-180' : ''
+                                        className={`w-[14px] h-[14px] lg:w-[24px] lg:h-[24px] ${locale === 'ar' ? 'transform rotate-180 order-1' : 'order-2'
                                             }`}
                                     />
                                 </button>
