@@ -8,17 +8,18 @@ import React, { useState, useEffect, useRef } from 'react'
 type NavItem = {
     id: string
     text: string
-    isActive?: boolean
 }
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false)
     const [isScrolled, setIsScrolled] = useState<boolean>(false)
+    const [activeSection, setActiveSection] = useState<string>('hero')
     const locale = useLocale()
     const t = useTranslations("Navbar")
     const router = useRouter()
     const pathname = usePathname()
     const navbarRef = useRef<HTMLElement>(null)
+    const observerRef = useRef<IntersectionObserver | null>(null)
 
     const toggleMenu = (): void => {
         setIsMenuOpen(!isMenuOpen)
@@ -36,6 +37,45 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
 
+    // Set up Intersection Observer to track which section is in view
+    useEffect(() => {
+        const sections = ['hero', 'about', 'features', 'faqs', 'contact']
+
+        observerRef.current = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        setActiveSection(entry.target.id)
+                    }
+                })
+            },
+            {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.5 // Adjust this value as needed (0.5 means 50% of the section is visible)
+            }
+        )
+
+        // Observe all sections
+        sections.forEach(section => {
+            const element = document.getElementById(section)
+            if (element) {
+                observerRef.current?.observe(element)
+            }
+        })
+
+        return () => {
+            if (observerRef.current) {
+                sections.forEach(section => {
+                    const element = document.getElementById(section)
+                    if (element) {
+                        observerRef.current?.unobserve(element)
+                    }
+                })
+            }
+        }
+    }, [pathname, locale]) // Re-run when pathname or locale changes
+
     // Function to switch language
     const switchLanguage = (): void => {
         const newLocale = locale === "en" ? "ar" : "en"
@@ -44,14 +84,15 @@ const Navbar = () => {
         const currentPath = window.location.pathname
         const pathWithoutLocale = currentPath.split("/").slice(2).join("/")
         const searchParams = new URLSearchParams(window.location.search)
-        const newPath = `/${newLocale}/${pathWithoutLocale}${searchParams.toString() ? `?${searchParams.toString()}` : ""
-            }`
+        const newPath = `/${newLocale}/${pathWithoutLocale}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`
 
         router.replace(newPath, { scroll: false })
     }
 
     // Function to handle smooth scrolling with navbar offset
     const scrollToSection = (sectionId: string): void => {
+        setActiveSection(sectionId) // Set active section immediately on click
+
         if (pathname !== `/${locale}`) {
             router.push(`/${locale}#${sectionId}`)
             return
@@ -73,7 +114,7 @@ const Navbar = () => {
     }
 
     const navItems: NavItem[] = [
-        { id: "hero", text: t("home"), isActive: true },
+        { id: "hero", text: t("home") },
         { id: "about", text: t("about") },
         { id: "features", text: t("features") },
         { id: "faqs", text: t("faqs") },
@@ -111,7 +152,7 @@ const Navbar = () => {
                                 <li key={index}>
                                     <button
                                         onClick={() => scrollToSection(item.id)}
-                                        className={`px-3 py-1.5 rounded-lg font-medium text-sm xl:text-base transition-colors cursor-pointer ${item.isActive ? 'text-[#7745A2]' : 'text-black hover:text-[#7745A2]'
+                                        className={`px-3 py-1.5 rounded-lg font-medium text-sm xl:text-base transition-colors cursor-pointer ${activeSection === item.id ? 'text-[#7745A2]' : 'text-black hover:text-[#7745A2]'
                                             }`}
                                         aria-label={`Scroll to ${item.text}`}
                                     >
@@ -205,7 +246,7 @@ const Navbar = () => {
                                 <li key={index} className="px-4">
                                     <button
                                         onClick={() => scrollToSection(item.id)}
-                                        className={`font-semibold ${item.isActive ? 'text-[#7745A2]' : 'text-black'
+                                        className={`font-semibold ${activeSection === item.id ? 'text-[#7745A2]' : 'text-black'
                                             }`}
                                         aria-label={`Scroll to ${item.text}`}
                                     >
