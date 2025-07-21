@@ -7,7 +7,7 @@ import { Swiper as SwiperType } from 'swiper/types'
 import 'swiper/css'
 import 'swiper/css/navigation'
 import { FaChevronLeft, FaChevronRight } from 'react-icons/fa'
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 
 type Feature = {
     id: number
@@ -25,6 +25,7 @@ const Features = () => {
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
     const sectionRef = useRef<HTMLElement>(null)
     const t = useTranslations("Features")
+    const locale = useLocale();
 
     const features: Feature[] = [
         {
@@ -317,9 +318,9 @@ const Features = () => {
                     {/* Mobile/Tablet Swiper */}
                     <div className='w-full lg:hidden order-2'>
                         <div className='flex items-center'>
-                            {/* Left Arrow with disabled state */}
+                            {/* Arrow with disabled state */}
                             <div className={`features-swiper-button-prev w-8 h-8 flex items-center justify-center mr-2 transition-all duration-300 hover:scale-110 ${isBeginning ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
-                                <FaChevronLeft className='w-6 h-6' />
+                                {locale === "ar" ? <FaChevronRight className='w-6 h-6' /> : <FaChevronLeft className='w-6 h-6' />}
                             </div>
 
                             {/* Swiper Container */}
@@ -369,9 +370,9 @@ const Features = () => {
                                 </Swiper>
                             </div>
 
-                            {/* Right Arrow with disabled state */}
+                            {/*Arrow with disabled state */}
                             <div className={`features-swiper-button-next w-8 h-8 flex items-center justify-center ml-2 transition-all duration-300 hover:scale-110 ${isEnd ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
-                                <FaChevronRight className='w-6 h-6' />
+                                {locale === "ar" ? <FaChevronLeft className='w-6 h-6' /> : <FaChevronRight className='w-6 h-6' />}
                             </div>
                         </div>
 
