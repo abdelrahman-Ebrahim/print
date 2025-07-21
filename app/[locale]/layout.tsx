@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "../globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import SplashScreen from "@/components/SplashScreen";
 import { NextIntlClientProvider, hasLocale } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { routing } from '@/i18n/routing';
@@ -32,9 +33,11 @@ export default async function RootLayout({
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
       <body suppressHydrationWarning className={`antialiased font-rubik`}>
         <NextIntlClientProvider>
-          <Navbar />
-          {children}
-          <Footer />
+          <SplashScreen>
+            <Navbar />
+            {children}
+            <Footer />
+          </SplashScreen>
         </NextIntlClientProvider>
       </body>
     </html>

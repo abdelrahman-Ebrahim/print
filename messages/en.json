@@ -1,4 +1,9 @@
 {
+  "SplashScreen": {
+    "welcomeMessage": "Welcome to Print",
+    "premium": "Your premium printing solution awaits",
+    "experience": "Enter Experience"
+  },
   "Navbar": {
     "home": "Home",
     "about": "About",

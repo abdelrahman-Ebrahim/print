@@ -1,4 +1,9 @@
 {
+  "SplashScreen": {
+    "welcomeMessage": "مرحبا بك في برنت",
+    "premium": "تجربة الطباعة المميزة تنتظرك",
+    "experience": "خض التجربة"
+  },
   "Navbar": {
     "home": "الرئيسية",
     "about": "عن التطبيق",
