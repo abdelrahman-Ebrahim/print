@@ -58,7 +58,7 @@ const Hero = () => {
                 )}
             </div>
 
-            <div className='flex flex-col items-start gap-4 lg:flex-row w-full xlg:gap-8 xlg:w-[1376px] relative z-10'>
+            <div className='flex flex-col items-center lg:items-start gap-4 lg:flex-row w-full xlg:gap-8 xlg:w-[1376px] relative z-10'>
                 {/* Text Content with Staggered Animation */}
                 <div className={`py-8 pb-0 flex flex-col gap-4 lg:py-10 lg:px-6 xlg:gap-6 xlg:!py-20 xlg:!px-12 transition-all duration-1000 ${mounted ? 'translate-x-0 opacity-100' : '-translate-x-10 opacity-0'
                     }`}>
