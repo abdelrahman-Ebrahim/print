@@ -1,6 +1,7 @@
 "use client"
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
+import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import React, { useState, useEffect, useRef } from 'react'
 
@@ -166,7 +167,7 @@ const Navbar = () => {
                     {/* Desktop Join & Profile */}
                     <div className='items-center gap-6 hidden lg:flex'>
                         <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-item transition-all duration-300 hover:scale-105'>
-                            <button
+                            <Link href={`/${locale}/serviceprovider`}
                                 className='flex items-center gap-[9.21px] cursor-pointer group'
                                 aria-label="Join"
                             >
@@ -183,7 +184,7 @@ const Navbar = () => {
                                     className={`group-hover:scale-110 transition-all duration-300 ${locale === 'ar' ? 'transform rotate-180 group-hover:-translate-x-2' : 'group-hover:translate-x-2'
                                         }`}
                                 />
-                            </button>
+                            </Link>
                         </div>
                         <button
                             onClick={switchLanguage}
@@ -274,7 +275,7 @@ const Navbar = () => {
                             {/* Enhanced Mobile Join Button */}
                             <div className="mx-auto mt-4 group">
                                 <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg shadow-gray-300/40 group-hover:shadow-xl group-hover:shadow-purple-300/50 transition-all duration-300 group-hover:scale-105 w-fit'>
-                                    <button
+                                    <Link href={`/${locale}/serviceprovider`}
                                         className='flex items-center gap-[9.21px] cursor-pointer group/mobile-button'
                                         aria-label="Join"
                                     >
@@ -291,7 +292,7 @@ const Navbar = () => {
                                             className={`group-hover/mobile-button:scale-110 transition-all duration-300 ${locale === 'ar' ? 'transform rotate-180 group-hover/mobile-button:-translate-x-2' : 'group-hover/mobile-button:translate-x-2'
                                                 }`}
                                         />
-                                    </button>
+                                    </Link>
                                 </div>
                             </div>
 

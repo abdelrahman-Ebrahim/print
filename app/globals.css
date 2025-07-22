@@ -63,3 +63,20 @@
 }
 
 
+
+.custom-swiper-pagination .swiper-pagination {
+  margin-top: 24px;
+  position: static !important;
+  text-align: center;
+}
+
+.custom-swiper-pagination .swiper-pagination-bullet {
+  background: #8d5fd3;
+  opacity: 0.4;
+}
+
+.custom-swiper-pagination .swiper-pagination-bullet-active {
+  background: #8d5fd3;
+  opacity: 1;
+}
+
