@@ -219,7 +219,7 @@ const Info = () => {
                                         </>
                                     )}
 
-                                    <p className='font-medium text-black text-[32px] xlg:text-[40px] transition-colors duration-300 relative'>
+                                    <p className='font-medium text-black text-[32px] xlg:text-[40px] transition-colors duration-300 relative text-nowrap max-[425px]:text-[22px]'>
                                         {card.count}
                                         <span
                                             className={`text-[#7745A2] inline-block transition-all duration-300 ${hoveredCard === index ? 'animate-bounce' : ''
