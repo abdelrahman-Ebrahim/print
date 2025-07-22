@@ -299,7 +299,7 @@ const Features = () => {
                 </div>
 
                 {/* Section header with underline animation */}
-                <div className="relative z-10">
+                <div className="relative z-10 mb-4 lg:mb-0">
                     <h6 className={`text-[#7745A2] uppercase font-semibold text-sm transition-all duration-1000 ${isVisible
                         ? 'opacity-100 translate-y-0 tracking-wider'
                         : 'opacity-0 translate-y-4 tracking-normal'
@@ -319,15 +319,15 @@ const Features = () => {
                     <div className='w-full lg:hidden order-2'>
                         <div className='flex items-center'>
                             {/* Arrow with disabled state */}
-                            <div className={`features-swiper-button-prev w-8 h-8 flex items-center justify-center mr-2 transition-all duration-300 hover:scale-110 ${isBeginning ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
+                            <div className={`features-swiper-button-prev w-8 h-8 flex items-center justify-center transition-all duration-300 hover:scale-110 ${isBeginning ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
                                 {locale === "ar" ? <FaChevronRight className='w-6 h-6' /> : <FaChevronLeft className='w-6 h-6' />}
                             </div>
 
                             {/* Swiper Container */}
                             <div className='flex-1 overflow-hidden'>
                                 <Swiper
-                                    slidesPerView={2}
-                                    spaceBetween={32}
+                                    slidesPerView={1} // Default to 1 slide
+                                    spaceBetween={32} // Default gap
                                     centeredSlides={false}
                                     navigation={{
                                         nextEl: '.features-swiper-button-next',
@@ -338,6 +338,12 @@ const Features = () => {
                                     onSwiper={(swiper) => setSwiperInstance(swiper)}
                                     initialSlide={activeIndex}
                                     breakpoints={{
+                                        // 2 cards from 425px to 767px
+                                        425: {
+                                            slidesPerView: 2,
+                                            spaceBetween: 32,
+                                        },
+                                        // 3 cards from 640px
                                         640: {
                                             slidesPerView: 3,
                                             spaceBetween: 16,
@@ -348,10 +354,10 @@ const Features = () => {
                                     watchOverflow={false}
                                 >
                                     {features.map((feature, index) => (
-                                        <SwiperSlide key={feature.id} className='!w-[calc(50%-16px)] md:!w-[calc(33.33%-10.67px)]'>
+                                        <SwiperSlide key={feature.id} className='!w-full min-[425px]:!w-[calc(50%-16px)] sm:!w-[calc(32.33%-5.33px)]'>
                                             <div
                                                 onClick={() => handleFeatureClick(index)}
-                                                className={`card-hover flex-center flex-col w-[124.66px] h-[167.52px] md:w-full rounded-[12.71px] p-[9.65px] cursor-pointer transition-all duration-300 mx-auto ${activeIndex === index
+                                                className={`card-hover flex-center flex-col w-full sm:w-auto h-[167.52px] rounded-[12.71px] p-[9.65px] cursor-pointer transition-all duration-300 mx-auto ${activeIndex === index
                                                     ? 'bg-[#7745A214] shadow-lg shadow-[#7745A2]/20'
                                                     : 'hover:bg-[#7745A208] hover:shadow-md'
                                                     }`}
@@ -371,7 +377,7 @@ const Features = () => {
                             </div>
 
                             {/*Arrow with disabled state */}
-                            <div className={`features-swiper-button-next w-8 h-8 flex items-center justify-center ml-2 transition-all duration-300 hover:scale-110 ${isEnd ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
+                            <div className={`features-swiper-button-next w-8 h-8 flex items-center justify-center transition-all duration-300 hover:scale-110 ${isEnd ? 'opacity-40 text-[#353566]' : 'text-[#7745A2] hover:text-[#5a3180]'}`}>
                                 {locale === "ar" ? <FaChevronLeft className='w-6 h-6' /> : <FaChevronRight className='w-6 h-6' />}
                             </div>
                         </div>
@@ -451,7 +457,7 @@ const Features = () => {
                         {/* Animated Radial Circles - Behind Image */}
                         <div className='absolute inset-0 flex-center z-0'>
                             {/* Outer Circle - Clockwise */}
-                            <div className='gear-outer w-[357.22px] h-[357.22px] lg:w-[450px] lg:h-[450px] xl:w-[545.37px] xl:h-[545.37px] rounded-full flex-center relative'>
+                            <div className='gear-outer max-[375px]:w-[300px] max-[375px]:h-[300px] w-[357.22px] h-[357.22px] lg:w-[450px] lg:h-[450px] xl:w-[545.37px] xl:h-[545.37px] rounded-full flex-center relative'>
                                 {/* Outer ring with subtle pattern */}
                                 <div className='absolute inset-0 rounded-full bg-gradient-to-r from-[#7745A2]/10 via-[#7745A2]/15 to-[#7745A2]/10'></div>
                                 <div className='absolute inset-2 rounded-full bg-gradient-to-l from-[#7745A2]/5 via-transparent to-[#7745A2]/5'></div>
@@ -479,7 +485,7 @@ const Features = () => {
                                 ))}
 
                                 {/* Middle Circle - Counter-clockwise */}
-                                <div className='gear-middle w-[316.38px] h-[316.38px] lg:w-[380px] lg:h-[380px] xl:w-[483.01px] xl:h-[483.01px] rounded-full flex-center relative'>
+                                <div className='gear-middle max-[375px]:w-[260px] max-[375px]:h-[260px] w-[316.38px] h-[316.38px] lg:w-[380px] lg:h-[380px] xl:w-[483.01px] xl:h-[483.01px] rounded-full flex-center relative'>
                                     {/* Middle ring with pattern */}
                                     <div className='absolute inset-0 rounded-full bg-gradient-to-r from-[#7745A2]/15 via-[#7745A2]/20 to-[#7745A2]/15'></div>
                                     <div className='absolute inset-3 rounded-full bg-gradient-to-l from-[#7745A2]/8 via-transparent to-[#7745A2]/8'></div>
@@ -515,7 +521,7 @@ const Features = () => {
                                     ))}
 
                                     {/* Inner Circle - Slow clockwise */}
-                                    <div className='gear-inner w-[275.96px] h-[275.96px] lg:w-[320px] lg:h-[320px] xl:w-[421.31px] xl:h-[421.31px] rounded-full relative flex-center'>
+                                    <div className='gear-inner max-[375px]:w-[220px] max-[375px]:h-[220px] w-[275.96px] h-[275.96px] lg:w-[320px] lg:h-[320px] xl:w-[421.31px] xl:h-[421.31px] rounded-full relative flex-center'>
                                         {/* Inner ring with pattern */}
                                         <div className='absolute inset-0 rounded-full bg-gradient-to-r from-[#7745A2]/20 via-[#7745A2]/25 to-[#7745A2]/20'></div>
                                         <div className='absolute inset-4 rounded-full bg-gradient-to-l from-[#7745A2]/10 via-transparent to-[#7745A2]/10'></div>
