@@ -132,9 +132,9 @@ const FAQs = () => {
                     onMouseEnter={() => setSubtitleHovered(true)}
                     onMouseLeave={() => setSubtitleHovered(false)}
                 >
-                    <span className={`transition-all duration-300 ${subtitleHovered ? 'tracking-wide' : ''}`}>
+                    <p className={`transition-all duration-300 text-center ${subtitleHovered ? 'tracking-wide' : ''}`}>
                         {t('subtitle')}
-                    </span>
+                    </p>
                     <div className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-[#7745A2] to-purple-400 transition-all duration-300 ${subtitleHovered ? 'w-full opacity-100' : 'w-0 opacity-0'}`}></div>
                 </div>
             </div>
@@ -144,7 +144,7 @@ const FAQs = () => {
                     <div
                         key={index}
                         className={`
-                            min-w-[340px] max-[375px]:min-w-[310px] flex flex-col gap-2 lg:gap-4 p-6 rounded-xl cursor-pointer
+                            min-[375px]:min-w-[340px] flex flex-col gap-2 lg:gap-4 p-6 rounded-xl cursor-pointer
                             transform transition-all duration-700 ease-out
                             bg-gradient-to-br from-white via-[#F9F7FC] to-white
                             border border-[#eee]
