@@ -3,50 +3,220 @@ import { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslations, useLocale } from "next-intl";
 import { IoSend } from "react-icons/io5";
+import axios from "axios";
 
 const countries = [
-    { value: "", label: "Choose your country..." },
-    { value: "sa", label: "Saudi Arabia" },
-    { value: "eg", label: "Egypt" },
-    { value: "ae", label: "UAE" },
-    // يمكن إضافة المزيد
+    { id: 1, value: "sa", label: "Saudi Arabia" },
+    { id: 2, value: "eg", label: "Egypt" },
+    { id: 3, value: "ae", label: "UAE" },
 ];
 
 const cities = [
-    { value: "", label: "Choose your city..." },
-    { value: "riyadh", label: "Riyadh" },
-    { value: "jeddah", label: "Jeddah" },
-    { value: "cairo", label: "Cairo" },
-    // يمكن إضافة المزيد
+    { id: 1, value: "riyadh", label: "Riyadh", countryId: 1 },
+    { id: 2, value: "jeddah", label: "Jeddah", countryId: 1 },
+    { id: 3, value: "cairo", label: "Cairo", countryId: 2 },
+    { id: 4, value: "dubai", label: "Dubai", countryId: 3 },
 ];
+
+type FormData = {
+    name: string;
+    mobile: string;
+    email: string;
+    commercial_name: string;
+    country: number;
+    city: number;
+    password: string;
+    confirmPassword: string;
+};
+
+type FormErrors = {
+    name?: string;
+    mobile?: string;
+    email?: string;
+    commercial_name?: string;
+    country?: string;
+    city?: string;
+    password?: string;
+    confirmPassword?: string;
+    api?: string;
+};
 
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         name: "",
-        contact: "",
+        mobile: "",
         email: "",
-        commercial: "",
-        country: "",
-        city: "",
+        commercial_name: "",
+        country: 0,
+        city: 0,
         password: "",
         confirmPassword: "",
     });
+    const [errors, setErrors] = useState<FormErrors>({});
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
+    const [filteredCities, setFilteredCities] = useState(cities);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+
+        setFormData((prev) => {
+            const newData = { ...prev, [name]: value };
+
+            // Filter cities when country changes
+            if (name === "country") {
+                const selectedCountry = Number(value);
+                const newCities = selectedCountry
+                    ? cities.filter((city) => city.countryId === selectedCountry)
+                    : cities;
+                setFilteredCities(newCities);
+
+                // Reset city if it's not available in the new country
+                if (selectedCountry && newData.city) {
+                    const cityExists = newCities.some((c) => c.id === newData.city);
+                    if (!cityExists) {
+                        newData.city = 0;
+                    }
+                }
+            }
+
+            return newData;
+        });
+
+        // Clear error when user types
+        if (errors[name as keyof FormErrors]) {
+            setErrors((prev) => ({ ...prev, [name]: undefined }));
+        }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const validateForm = (): boolean => {
+        const newErrors: FormErrors = {};
+        const phoneRegex = /^\+?\d{1,15}$/;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[^\s]{8,64}$/;
+
+        // Name validation
+        if (!formData.name.trim()) {
+            newErrors.name = t("errors.nameRequired");
+        }
+
+        // Mobile validation
+        if (!formData.mobile.trim()) {
+            newErrors.mobile = t("errors.mobileRequired");
+        } else if (!phoneRegex.test(formData.mobile)) {
+            newErrors.mobile = t("errors.mobileInvalid");
+        }
+
+        // Email validation
+        if (!formData.email.trim()) {
+            newErrors.email = t("errors.emailRequired");
+        } else if (!emailRegex.test(formData.email)) {
+            newErrors.email = t("errors.emailInvalid");
+        }
+
+        // Commercial name validation
+        if (!formData.commercial_name.trim()) {
+            newErrors.commercial_name = t("errors.commercialNameRequired");
+        }
+
+        // Country validation
+        if (!formData.country) {
+            newErrors.country = t("errors.countryRequired");
+        }
+
+        // City validation
+        if (!formData.city) {
+            newErrors.city = t("errors.cityRequired");
+        }
+
+        // Password validation
+        if (!formData.password) {
+            newErrors.password = t("errors.passwordRequired");
+        } else if (!passwordRegex.test(formData.password)) {
+            newErrors.password = t("errors.passwordInvalid");
+        }
+
+        // Confirm password validation
+        if (!formData.confirmPassword) {
+            newErrors.confirmPassword = t("errors.confirmPasswordRequired");
+        } else if (formData.password !== formData.confirmPassword) {
+            newErrors.confirmPassword = t("errors.passwordsDontMatch");
+        }
+
+        setErrors(newErrors);
+        return Object.keys(newErrors).length === 0;
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData);
+
+        if (!validateForm()) {
+            return;
+        }
+
+        setIsSubmitting(true);
+        setErrors((prev) => ({ ...prev, api: undefined }));
+        setSuccessMessage(null); // إخفاء رسالة النجاح القديمة
+
+        try {
+            const response = await axios.post(
+                "/api/service-provider/signup",
+                {
+                    name: formData.name,
+                    mobile: formData.mobile,
+                    mobile_code: "+966",
+                    email: formData.email,
+                    password: formData.password,
+                    commercial_name: formData.commercial_name,
+                    country: formData.country,
+                    city: formData.city,
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Accept-Language": locale === "ar" ? "ar-SA" : "en-US",
+                    },
+                }
+            );
+
+            const data = response.data;
+
+            if (!data.status) {
+                if (data.message) {
+                    setErrors((prev) => ({ ...prev, api: data.message }));
+                } else {
+                    setErrors((prev) => ({ ...prev, api: t("errors.submissionFailed") }));
+                }
+            } else {
+                setSuccessMessage(t("successMessage")); // أضف رسالة النجاح من الترجمة أو نص ثابت
+                setFormData({
+                    name: "",
+                    mobile: "",
+                    email: "",
+                    commercial_name: "",
+                    country: 0,
+                    city: 0,
+                    password: "",
+                    confirmPassword: "",
+                });
+            }
+        } catch (error: any) {
+            console.error("Registration error:", error);
+            setErrors((prev) => ({
+                ...prev,
+                api: t("errors.networkError"),
+            }));
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -65,6 +235,17 @@ const Form = () => {
                 onSubmit={handleSubmit}
                 className="bg-white rounded-2xl shadow-lg p-8 md:p-12"
             >
+                {successMessage && (
+                    <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex flex-col gap-2">
+                        {successMessage}
+                    </div>
+                )}
+                {errors.api && (
+                    <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg flex flex-col gap-2">
+                        {errors.api}
+                    </div>
+                )}
+
                 <div className="flex flex-wrap -mx-3">
                     {/* Name */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
@@ -77,25 +258,33 @@ const Form = () => {
                             placeholder={t("namePlaceholder")}
                             value={formData.name}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.name ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
+                        {errors.name && (
+                            <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                        )}
                     </div>
-                    {/* Contact Number */}
+
+                    {/* Mobile Number */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
                         <label className="block text-sm font-semibold mb-2">
-                            {t("contact")}
+                            {t("mobile")}
                         </label>
                         <input
                             type="text"
-                            name="contact"
-                            placeholder={t("contactPlaceholder")}
-                            value={formData.contact}
+                            name="mobile"
+                            placeholder={t("mobilePlaceholder")}
+                            value={formData.mobile}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.mobile ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
+                        {errors.mobile && (
+                            <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>
+                        )}
                     </div>
+
                     {/* Email Address */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
                         <label className="block text-sm font-semibold mb-2">
@@ -107,25 +296,33 @@ const Form = () => {
                             placeholder={t("emailPlaceholder")}
                             value={formData.email}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.email ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
+                        {errors.email && (
+                            <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                        )}
                     </div>
+
                     {/* Commercial Name */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
                         <label className="block text-sm font-semibold mb-2">
-                            {t("commercial")}
+                            {t("commercialName")}
                         </label>
                         <input
                             type="text"
-                            name="commercial"
-                            placeholder={t("commercialPlaceholder")}
-                            value={formData.commercial}
+                            name="commercial_name"
+                            placeholder={t("commercialNamePlaceholder")}
+                            value={formData.commercial_name}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.commercial_name ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
+                        {errors.commercial_name && (
+                            <p className="mt-1 text-sm text-red-600">{errors.commercial_name}</p>
+                        )}
                     </div>
+
                     {/* Country */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
                         <label className="block text-sm font-semibold mb-2">
@@ -138,22 +335,20 @@ const Form = () => {
                                 onChange={handleChange}
                                 onFocus={() => setIsCountryOpen(true)}
                                 onBlur={() => setIsCountryOpen(false)}
-                                className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600 appearance-none transition-shadow duration-200 focus:shadow-lg"
-                                required
+                                className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none appearance-none transition-shadow duration-200 ${errors.country ? "border-red-500" : "focus:border-purple-600 focus:shadow-lg"
+                                    }`}
                                 style={{
                                     WebkitAppearance: "none",
                                     MozAppearance: "none",
                                     appearance: "none",
                                 }}
                             >
-                                <option value="">{t("countryPlaceholder")}</option>
-                                {countries
-                                    .filter((c) => c.value)
-                                    .map((c) => (
-                                        <option key={c.value} value={c.value}>
-                                            {t(`country_${c.value}`)}
-                                        </option>
-                                    ))}
+                                <option value={0}>{t("countryPlaceholder")}</option>
+                                {countries.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {t(`country_${c.value}`)}
+                                    </option>
+                                ))}
                             </select>
                             <span
                                 className={`pointer-events-none absolute ${locale === "ar" ? "left-5" : "right-5"
@@ -188,7 +383,11 @@ const Form = () => {
                                 </svg>
                             </span>
                         </div>
+                        {errors.country && (
+                            <p className="mt-1 text-sm text-red-600">{errors.country}</p>
+                        )}
                     </div>
+
                     {/* City */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
                         <label className="block text-sm font-semibold mb-2">
@@ -201,22 +400,21 @@ const Form = () => {
                                 onChange={handleChange}
                                 onFocus={() => setIsCityOpen(true)}
                                 onBlur={() => setIsCityOpen(false)}
-                                className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600 appearance-none transition-shadow duration-200 focus:shadow-lg"
-                                required
+                                className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none appearance-none transition-shadow duration-200 ${errors.city ? "border-red-500" : "focus:border-purple-600 focus:shadow-lg"
+                                    }`}
                                 style={{
                                     WebkitAppearance: "none",
                                     MozAppearance: "none",
                                     appearance: "none",
                                 }}
+                                disabled={!formData.country}
                             >
-                                <option value="">{t("cityPlaceholder")}</option>
-                                {cities
-                                    .filter((c) => c.value)
-                                    .map((c) => (
-                                        <option key={c.value} value={c.value}>
-                                            {t(`city_${c.value}`)}
-                                        </option>
-                                    ))}
+                                <option value={0}>{t("cityPlaceholder")}</option>
+                                {filteredCities.map((c) => (
+                                    <option key={c.id} value={c.id}>
+                                        {t(`city_${c.value}`)}
+                                    </option>
+                                ))}
                             </select>
                             <span
                                 className={`pointer-events-none absolute ${locale === "ar" ? "left-5" : "right-5"
@@ -251,7 +449,11 @@ const Form = () => {
                                 </svg>
                             </span>
                         </div>
+                        {errors.city && (
+                            <p className="mt-1 text-sm text-red-600">{errors.city}</p>
+                        )}
                     </div>
+
                     {/* Password */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
                         <label className="block text-sm font-semibold mb-2">
@@ -269,8 +471,8 @@ const Form = () => {
                             }
                             value={formData.password}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600 pr-12 pl-4"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none pr-12 pl-4 ${errors.password ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
                         <button
                             type="button"
@@ -281,6 +483,9 @@ const Form = () => {
                         >
                             {showPassword ? <FaEye /> : <FaEyeSlash />}
                         </button>
+                        {errors.password && (
+                            <p className="mt-1 text-sm text-red-600">{errors.password}</p>
+                        )}
                     </div>
 
                     {/* Confirm Password */}
@@ -300,8 +505,8 @@ const Form = () => {
                             }
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            className="w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none focus:border-purple-600 pr-12 pl-4"
-                            required
+                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none pr-12 pl-4 ${errors.confirmPassword ? "border-red-500" : "focus:border-purple-600"
+                                }`}
                         />
                         <button
                             type="button"
@@ -312,14 +517,20 @@ const Form = () => {
                         >
                             {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
                         </button>
+                        {errors.confirmPassword && (
+                            <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
+                        )}
                     </div>
                 </div>
-                <div className="flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2 ">
+
+                <div className="flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2">
                     <button
                         type="submit"
-                        className="flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md hover:bg-purple-800 transition-all duration-200"
+                        disabled={isSubmitting}
+                        className={`flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md hover:bg-purple-800 transition-all duration-200 ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                     >
-                        {t("submit")}
+                        {isSubmitting ? t("submitting") : t("submit")}
                         <span className="inline-block"></span>
                     </button>
                     <IoSend
