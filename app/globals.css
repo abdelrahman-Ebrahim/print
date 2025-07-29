@@ -80,3 +80,16 @@
   opacity: 1;
 }
 
+
+
+/* Phone Input Dropdown Styles */
+.iti--inline-dropdown .iti__dropdown-content {
+    position: absolute;
+    top:0;
+    left: 0;
+    z-index: 2;
+    margin-top: 3px;
+    margin-left: calc(var(--iti-border-width) * -1);
+    border: var(--iti-border-width) solid var(--iti-border-color);
+    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}

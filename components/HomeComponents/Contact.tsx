@@ -2,10 +2,10 @@
 
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import './contact-animations.css'
 import { getRecaptchaToken } from '../RecaptchaProvider'
-
+import PhoneInput from '../IntlTelInputField'
 
 
 interface FormData {
@@ -46,11 +46,18 @@ const Contact = () => {
         email: '',
         message: ''
     })
+    const [touched, setTouched] = useState({
+        name: false,
+        phone: false,
+        email: false,
+        message: false
+    })
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitSuccess, setSubmitSuccess] = useState(false)
     const [submitError, setSubmitError] = useState('')
     const [apiMessage, setApiMessage] = useState('')
     const [showApiMessage, setShowApiMessage] = useState(false)
+    const [isPhoneValid, setIsPhoneValid] = useState(false)
 
     const validateForm = (): boolean => {
         let isValid = true
@@ -70,8 +77,8 @@ const Contact = () => {
             isValid = false
         }
 
-        // Phone validation (optional)
-        if (formData.phone && !/^\+?[1-9]\d{0,14}$/.test(formData.phone)) {
+        // Phone validation - now using the intl-tel-input validation
+        if (formData.phone && !isPhoneValid) {
             newErrors.phone = v('phoneInvalid')
             isValid = false
         }
@@ -107,6 +114,12 @@ const Contact = () => {
             [id]: value
         }))
 
+        // Mark field as touched
+        setTouched(prev => ({
+            ...prev,
+            [id]: true
+        }))
+
         // Clear error when user types
         if (errors[id as keyof FormErrors]) {
             setErrors(prev => ({
@@ -115,6 +128,33 @@ const Contact = () => {
             }))
         }
     }
+
+    // Memoized phone change handler
+    const handlePhoneChange = useCallback((phoneValue: string) => {
+        setFormData(prev => ({
+            ...prev,
+            phone: phoneValue
+        }))
+
+        // Mark phone as touched
+        setTouched(prev => ({
+            ...prev,
+            phone: true
+        }))
+
+        // Clear phone error when user types
+        if (errors.phone) {
+            setErrors(prev => ({
+                ...prev,
+                phone: ''
+            }))
+        }
+    }, [errors.phone])
+
+    // Memoized phone validation handler
+    const handlePhoneValidation = useCallback((isValid: boolean) => {
+        setIsPhoneValid(isValid)
+    }, [])
 
     const clearMessages = () => {
         setSubmitSuccess(false)
@@ -126,10 +166,18 @@ const Contact = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
 
+        // Mark all fields as touched
+        setTouched({
+            name: true,
+            phone: true,
+            email: true,
+            message: true
+        })
+
         if (!validateForm()) return
 
         setIsSubmitting(true)
-        clearMessages() // Clear all previous messages
+        clearMessages()
 
         try {
             // Get reCAPTCHA token with detailed logging
@@ -139,7 +187,6 @@ const Contact = () => {
                 console.log('Starting reCAPTCHA token generation...')
                 token = await getRecaptchaToken('contact_us')
                 console.log('Token generation successful')
-                console.log('Full token (for debugging):', token)
             } catch (recaptchaError) {
                 console.error('reCAPTCHA error details:', recaptchaError)
                 setSubmitError('Failed to verify you are human. Please refresh the page and try again.')
@@ -151,7 +198,7 @@ const Contact = () => {
             // Prepare form data with trimming
             const submissionData = {
                 name: formData.name.trim(),
-                phone: formData.phone.trim(),
+                phone: formData.phone.trim(), // This will now be the full international number
                 email: formData.email.trim(),
                 message: formData.message.trim(),
                 recaptchaToken: token
@@ -159,10 +206,6 @@ const Contact = () => {
 
             console.group('API Submission')
             console.log('Submitting form with data:', submissionData)
-            console.log('Headers:', {
-                'Content-Type': 'application/json',
-                'Accept-Language': locale === 'ar' ? 'ar-SA' : 'en-US'
-            })
 
             const response = await fetch('/api/frontend/contact', {
                 method: 'POST',
@@ -191,6 +234,12 @@ const Contact = () => {
                     email: '',
                     message: ''
                 })
+                setTouched({
+                    name: false,
+                    phone: false,
+                    email: false,
+                    message: false
+                })
             } else {
                 console.error('Backend validation failed')
 
@@ -198,13 +247,6 @@ const Contact = () => {
                 if (!data.show_message || !data.message) {
                     setSubmitError('Failed to submit form. Please try again.')
                 }
-
-                console.error('Backend error details:', {
-                    status: data.status,
-                    message: data.message,
-                    code: data.code,
-                    httpStatus: response.status
-                })
             }
             console.groupEnd()
         } catch (error) {
@@ -287,7 +329,7 @@ const Contact = () => {
                             </div>
                         )}
 
-                        {/* Fallback Success Message (when API doesn't provide show_message) */}
+                        {/* Fallback Success Message */}
                         {submitSuccess && !showApiMessage && (
                             <div className="mb-4 p-4 bg-green-100 text-green-700 rounded-lg border border-green-200">
                                 <div className="flex items-start gap-2">
@@ -299,7 +341,7 @@ const Contact = () => {
                             </div>
                         )}
 
-                        {/* Fallback Error Message (when API doesn't provide show_message) */}
+                        {/* Fallback Error Message */}
                         {submitError && !showApiMessage && (
                             <div className="mb-4 p-4 bg-red-100 text-red-700 rounded-lg border border-red-200">
                                 <div className="flex items-start gap-2">
@@ -329,19 +371,19 @@ const Contact = () => {
                                         />
                                         {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
                                     </div>
+                                    
+                                    {/* New Phone Input */}
                                     <div className='flex flex-col gap-2 w-full'>
-                                        <label htmlFor="phone" className='text-black font-semibold text-sm form-label'>
-                                            {t('formPhone')}
-                                        </label>
-                                        <input
-                                            id='phone'
-                                            type="text"
+                                        <PhoneInput
                                             value={formData.phone}
-                                            onChange={handleChange}
+                                            onChange={handlePhoneChange}
+                                            onValidationChange={handlePhoneValidation}
+                                            label={t('formPhone')}
                                             placeholder={t('phonePlaceholder')}
-                                            className={`rounded-[6px] border ${errors.phone ? 'border-red-500' : 'border-[#E5E7EB]'} bg-white px-[17px] pt-[13.5px] pb-[14px] form-input`}
+                                            initialCountry="sa"
+                                            error={errors.phone}
+                                            touched={touched.phone}
                                         />
-                                        {errors.phone && <p className="text-red-500 text-xs">{errors.phone}</p>}
                                     </div>
                                 </div>
 
