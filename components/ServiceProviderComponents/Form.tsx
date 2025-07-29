@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslations, useLocale } from "next-intl";
 import { IoSend } from "react-icons/io5";
@@ -7,19 +7,16 @@ import axios from "axios";
 import "./form-animations.css";
 import { getRecaptchaToken } from '../RecaptchaProvider';
 import PhoneInput from '../IntlTelInputField';
+import { fetchCountries, getCitiesForCountry, mapCountriesToFormFormat } from "@/utils/countryApi";
 
-const countries = [
-    { id: 1, value: "sa", label: "Saudi Arabia" },
-    { id: 2, value: "eg", label: "Egypt" },
-    { id: 3, value: "ae", label: "UAE" },
-];
 
-const cities = [
-    { id: 1, value: "riyadh", label: "Riyadh", countryId: 1 },
-    { id: 2, value: "jeddah", label: "Jeddah", countryId: 1 },
-    { id: 3, value: "cairo", label: "Cairo", countryId: 2 },
-    { id: 4, value: "dubai", label: "Dubai", countryId: 3 },
-];
+// Keep the original cities structure for now, will be filtered by country
+type City = {
+    id: number;
+    value: string;
+    label: string;
+    countryId: number;
+};
 
 type FormData = {
     name: string;
@@ -55,6 +52,18 @@ interface ApiResponse {
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
+    
+    // State for dynamic countries
+    const [countries, setCountries] = useState<Array<{
+        id: number;
+        value: string;
+        label: string;
+        code: string;
+        has_university: boolean;
+    }>>([]);
+    const [isLoadingCountries, setIsLoadingCountries] = useState(true);
+    const [cities, setCities] = useState<City[]>([]);
+    
     const [formData, setFormData] = useState<FormData>({
         name: "",
         mobile: "",
@@ -71,7 +80,7 @@ const Form = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
-    const [filteredCities, setFilteredCities] = useState(cities);
+    const [filteredCities, setFilteredCities] = useState<City[]>([]);
     const [apiMessage, setApiMessage] = useState('');
     const [submitError, setSubmitError] = useState('');
     const [showApiMessage, setShowApiMessage] = useState(false);
@@ -87,6 +96,25 @@ const Form = () => {
         confirmPassword: false,
     });
 
+    // Load countries on component mount
+    useEffect(() => {
+        const loadCountries = async () => {
+            setIsLoadingCountries(true);
+            try {
+                const fetchedCountries = await fetchCountries(locale);
+                const mappedCountries = mapCountriesToFormFormat(fetchedCountries);
+                setCountries(mappedCountries);
+            } catch (error) {
+                console.error('Failed to load countries:', error);
+                // Fallback countries are already handled in fetchCountries
+            } finally {
+                setIsLoadingCountries(false);
+            }
+        };
+
+        loadCountries();
+    }, [locale]);
+
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
@@ -98,8 +126,8 @@ const Form = () => {
             if (name === "country") {
                 const selectedCountry = Number(value);
                 const newCities = selectedCountry
-                    ? cities.filter((city) => city.countryId === selectedCountry)
-                    : cities;
+                    ? getCitiesForCountry(selectedCountry)
+                    : [];
                 setFilteredCities(newCities);
 
                 if (selectedCountry && newData.city) {
@@ -231,10 +259,14 @@ const Form = () => {
         try {
             const token = await getRecaptchaToken('service_provider_signup');
 
+            // Get the selected country's phone code
+            const selectedCountry = countries.find(c => c.id === formData.country);
+            const countryCode = selectedCountry ? `+${selectedCountry.code}` : "+966";
+
             const submissionData = {
                 name: formData.name.trim(),
-                mobile: formData.mobile.trim(), // This will now be the full international number
-                mobile_code: "+966", // You might want to extract this from the phone number
+                mobile: formData.mobile.trim(),
+                mobile_code: countryCode,
                 email: formData.email.trim(),
                 password: formData.password,
                 commercial_name: formData.commercial_name.trim(),
@@ -283,6 +315,7 @@ const Form = () => {
                     password: false,
                     confirmPassword: false,
                 });
+                setFilteredCities([]);
             }
         } catch (error: any) {
             if (error.response?.data?.message) {
@@ -419,11 +452,14 @@ const Form = () => {
                                     MozAppearance: "none",
                                     appearance: "none",
                                 }}
+                                disabled={isLoadingCountries}
                             >
-                                <option value={0}>{t("countryPlaceholder")}</option>
-                                {countries.map((c) => (
-                                    <option key={c.id} value={c.id}>
-                                        {t(`country_${c.value}`)}
+                                <option value={0}>
+                                    {isLoadingCountries ? "Loading countries..." : t("countryPlaceholder")}
+                                </option>
+                                {countries.map((country) => (
+                                    <option key={country.id} value={country.id}>
+                                        {country.label}
                                     </option>
                                 ))}
                             </select>
@@ -486,9 +522,9 @@ const Form = () => {
                                 disabled={!formData.country}
                             >
                                 <option value={0}>{t("cityPlaceholder")}</option>
-                                {filteredCities.map((c) => (
-                                    <option key={c.id} value={c.id}>
-                                        {t(`city_${c.value}`)}
+                                {filteredCities.map((city) => (
+                                    <option key={city.id} value={city.id}>
+                                        {city.label}
                                     </option>
                                 ))}
                             </select>
@@ -585,7 +621,7 @@ const Form = () => {
                         <button
                             type="button"
                             className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
-                                } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
+                                } top-1/2 -translate-y-1/2 text-black text-2xl focus:outline-none`}
                             onClick={() => setShowConfirmPassword((v) => !v)}
                             tabIndex={-1}
                         >
@@ -600,8 +636,8 @@ const Form = () => {
                 <div className="submit-button-container flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2 cursor-pointer">
                     <button
                         type="submit"
-                        disabled={isSubmitting}
-                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                        disabled={isSubmitting || isLoadingCountries}
+                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${(isSubmitting || isLoadingCountries) ? "opacity-70 cursor-not-allowed" : ""
                             }`}
                     >
                         {isSubmitting ? t("submitting") : t("submit")}
