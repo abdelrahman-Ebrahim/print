@@ -536,7 +536,7 @@ const Form = () => {
                     </div>
                 </div>
 
-                <div className="submit-button-container flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2">
+                <div className="submit-button-container flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2 cursor-pointer">
                     <button
                         type="submit"
                         disabled={isSubmitting}
