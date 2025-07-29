@@ -27,7 +27,7 @@ interface ApiResponse {
     show_message: boolean
     message: string
     code: number
-    data: null | any
+    data: null | Record<string, unknown>
 }
 
 const Contact = () => {
@@ -371,7 +371,7 @@ const Contact = () => {
                                         />
                                         {errors.name && <p className="text-red-500 text-xs">{errors.name}</p>}
                                     </div>
-                                    
+
                                     {/* New Phone Input */}
                                     <div className='flex flex-col gap-2 w-full'>
                                         <PhoneInput

@@ -4,6 +4,14 @@ import dynamic from "next/dynamic";
 import "intl-tel-input/styles";
 import { useLocale } from "next-intl";
 import ar from 'intl-tel-input/i18n/ar';
+import type { IntlTelInputRef } from "intl-tel-input/reactWithUtils";
+
+// Define proper types for the IntlTelInput instance
+interface IntlTelInputInstance {
+    getNumber(): string;
+    isValidNumber(): boolean;
+    getValidationError(): number;
+}
 
 const IntlTelInput = dynamic(() => import("intl-tel-input/reactWithUtils"), {
     ssr: false,
@@ -33,9 +41,7 @@ const PhoneInput = ({
     placeholder = "",
     additionalClasses,
 }: PhoneInputProps) => {
-    const telInputRef = useRef<any>(null);
-    const [isValidPhone, setIsValidPhone] = useState(false);
-    const [errorCode, setErrorCode] = useState<number | null>(null);
+    const telInputRef = useRef<IntlTelInputRef>(null);
     const [isClient, setIsClient] = useState(false);
     const locale = useLocale();
 
@@ -59,13 +65,8 @@ const PhoneInput = ({
     }, [value]);
 
     const handleValidationChange = useCallback((valid: boolean) => {
-        setIsValidPhone(valid);
         onValidationChange?.(valid);
     }, [onValidationChange]);
-
-    const handleErrorCodeChange = useCallback((code: number | null) => {
-        setErrorCode(code);
-    }, []);
 
     const handleNumberChange = useCallback(() => {
         const newValue = handleChange();
@@ -100,7 +101,7 @@ const PhoneInput = ({
                         initialValue={value}
                         onChangeNumber={handleNumberChange}
                         onChangeValidity={handleValidationChange}
-                        onChangeErrorCode={handleErrorCodeChange}
+                        onChangeErrorCode={() => { }} // Empty handler to satisfy the prop requirement
                         initOptions={{
                             initialCountry: initialCountry,
                             separateDialCode: true,
