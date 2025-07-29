@@ -19,6 +19,7 @@ interface PhoneInputProps {
     error?: string;
     touched?: boolean;
     placeholder?: string;
+    additionalClasses?: string;
 }
 
 const PhoneInput = ({
@@ -30,6 +31,7 @@ const PhoneInput = ({
     error,
     touched,
     placeholder = "",
+    additionalClasses,
 }: PhoneInputProps) => {
     const telInputRef = useRef<any>(null);
     const [isValidPhone, setIsValidPhone] = useState(false);
@@ -108,9 +110,8 @@ const PhoneInput = ({
                         }}
                         inputProps={{
                             id: "phone-input",
-                            className: `border-none w-full focus:outline-none placeholder:text-[#525252] bg-transparent px-[17px] pt-[13.5px] pb-[14px] ${
-                                locale === "ar" ? "text-right" : "text-left"
-                            }`,
+                            className: `border-none w-full h-auto focus:outline-none placeholder:text-[#525252] bg-transparent px-[17px] pt-[13.5px] pb-[14px] ${locale === "ar" ? "text-right" : "text-left"
+                                } ${additionalClasses}`,
                             dir: locale === "ar" ? "ltr" : "ltr",
                             placeholder: placeholder
                         }}

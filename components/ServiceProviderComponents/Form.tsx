@@ -1,11 +1,12 @@
 "use client";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslations, useLocale } from "next-intl";
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
 import "./form-animations.css";
 import { getRecaptchaToken } from '../RecaptchaProvider';
+import PhoneInput from '../IntlTelInputField';
 
 const countries = [
     { id: 1, value: "sa", label: "Saudi Arabia" },
@@ -74,6 +75,17 @@ const Form = () => {
     const [apiMessage, setApiMessage] = useState('');
     const [submitError, setSubmitError] = useState('');
     const [showApiMessage, setShowApiMessage] = useState(false);
+    const [isPhoneValid, setIsPhoneValid] = useState(false);
+    const [touched, setTouched] = useState({
+        name: false,
+        mobile: false,
+        email: false,
+        commercial_name: false,
+        country: false,
+        city: false,
+        password: false,
+        confirmPassword: false,
+    });
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -101,14 +113,46 @@ const Form = () => {
             return newData;
         });
 
+        // Mark field as touched
+        setTouched(prev => ({
+            ...prev,
+            [name]: true
+        }));
+
         if (errors[name as keyof FormErrors]) {
             setErrors((prev) => ({ ...prev, [name]: undefined }));
         }
     };
 
+    // Memoized phone change handler
+    const handlePhoneChange = useCallback((phoneValue: string) => {
+        setFormData(prev => ({
+            ...prev,
+            mobile: phoneValue
+        }));
+
+        // Mark phone as touched
+        setTouched(prev => ({
+            ...prev,
+            mobile: true
+        }));
+
+        // Clear phone error when user types
+        if (errors.mobile) {
+            setErrors(prev => ({
+                ...prev,
+                mobile: undefined
+            }));
+        }
+    }, [errors.mobile]);
+
+    // Memoized phone validation handler
+    const handlePhoneValidation = useCallback((isValid: boolean) => {
+        setIsPhoneValid(isValid);
+    }, []);
+
     const validateForm = (): boolean => {
         const newErrors: FormErrors = {};
-        const phoneRegex = /^\+?\d{1,15}$/;
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[^\s]{8,64}$/;
 
@@ -116,9 +160,8 @@ const Form = () => {
             newErrors.name = t("errors.nameRequired");
         }
 
-        if (!formData.mobile.trim()) {
-            newErrors.mobile = t("errors.mobileRequired");
-        } else if (!phoneRegex.test(formData.mobile)) {
+        // Phone validation - now using the intl-tel-input validation
+        if (formData.mobile && !isPhoneValid) {
             newErrors.mobile = t("errors.mobileInvalid");
         }
 
@@ -166,6 +209,18 @@ const Form = () => {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
+        // Mark all fields as touched
+        setTouched({
+            name: true,
+            mobile: true,
+            email: true,
+            commercial_name: true,
+            country: true,
+            city: true,
+            password: true,
+            confirmPassword: true,
+        });
+
         if (!validateForm()) {
             return;
         }
@@ -178,8 +233,8 @@ const Form = () => {
 
             const submissionData = {
                 name: formData.name.trim(),
-                mobile: formData.mobile.trim(),
-                mobile_code: "+966",
+                mobile: formData.mobile.trim(), // This will now be the full international number
+                mobile_code: "+966", // You might want to extract this from the phone number
                 email: formData.email.trim(),
                 password: formData.password,
                 commercial_name: formData.commercial_name.trim(),
@@ -218,6 +273,16 @@ const Form = () => {
                     password: "",
                     confirmPassword: "",
                 });
+                setTouched({
+                    name: false,
+                    mobile: false,
+                    email: false,
+                    commercial_name: false,
+                    country: false,
+                    city: false,
+                    password: false,
+                    confirmPassword: false,
+                });
             }
         } catch (error: any) {
             if (error.response?.data?.message) {
@@ -250,13 +315,12 @@ const Form = () => {
                 className="bg-white rounded-2xl shadow-lg p-8 md:p-12"
             >
                 {showApiMessage && (
-                    <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${
-                        apiMessage.toLowerCase().includes("success") || 
-                        apiMessage.toLowerCase().includes("completed") || 
-                        apiMessage.toLowerCase().includes("thank you")
-                            ? "bg-green-100 text-green-700" 
+                    <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${apiMessage.toLowerCase().includes("success") ||
+                            apiMessage.toLowerCase().includes("completed") ||
+                            apiMessage.toLowerCase().includes("thank you")
+                            ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-700"
-                    }`}>
+                        }`}>
                         {apiMessage}
                     </div>
                 )}
@@ -286,22 +350,19 @@ const Form = () => {
                         )}
                     </div>
 
+                    {/* Updated Mobile Input using PhoneInput component */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
-                        <label className="form-label block text-sm font-semibold mb-2">
-                            {t("mobile")}
-                        </label>
-                        <input
-                            type="text"
-                            name="mobile"
-                            placeholder={t("mobilePlaceholder")}
+                        <PhoneInput
                             value={formData.mobile}
-                            onChange={handleChange}
-                            className={`form-input w-full px-4 py-2 ${errors.mobile ? "border-red-500" : ""
-                                }`}
+                            onChange={handlePhoneChange}
+                            onValidationChange={handlePhoneValidation}
+                            label={t("mobile")}
+                            placeholder={t("mobilePlaceholder")}
+                            initialCountry="sa"
+                            error={errors.mobile}
+                            touched={touched.mobile}
+                            additionalClasses="!pt-2 !pb-2"
                         />
-                        {errors.mobile && (
-                            <p className="mt-1 text-sm text-red-600">{errors.mobile}</p>
-                        )}
                     </div>
 
                     <div className="w-full md:w-1/2 px-3 mb-6">
@@ -540,9 +601,8 @@ const Form = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${
-                            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-                        }`}
+                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                            }`}
                     >
                         {isSubmitting ? t("submitting") : t("submit")}
                         <span className="inline-block"></span>
