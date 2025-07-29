@@ -6,8 +6,6 @@ const FAQs = () => {
     const t = useTranslations("FAQs")
     const locale = useLocale()
     const [isVisible, setIsVisible] = useState(false)
-    const [titleHovered, setTitleHovered] = useState(false)
-    const [subtitleHovered, setSubtitleHovered] = useState(false)
     const sectionRef = useRef<HTMLElement>(null)
 
     useEffect(() => {
@@ -108,47 +106,37 @@ const FAQs = () => {
                 </div>
 
                 <h4
-                    className={`w-full font-bold text-center text-[28px] lg:text-[32px] xlg:!text-[36px] cursor-pointer relative overflow-hidden transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'} ${titleHovered ? 'scale-105' : ''}`}
-                    onMouseEnter={() => setTitleHovered(true)}
-                    onMouseLeave={() => setTitleHovered(false)}
+                    className={`w-full font-bold text-center text-[28px] lg:text-[32px] xlg:!text-[36px] relative overflow-hidden transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
                 >
-                    <span className={`inline-block transition-all text-center duration-500 ${titleHovered ? 'text-[#5a3472] transform -rotate-1' : ''}`}>
+                    <span className={`inline-block transition-all text-center duration-500`}>
                         {t('mainTitle1')}
                     </span>{' '}
-                    <span className={`text-[#7745A2] inline-block transition-all duration-500 ${titleHovered ? 'transform rotate-1 scale-110 ms-2' : ''}`}>
+                    <span className={`text-[#7745A2] inline-block transition-all duration-500`}>
                         {t('mainTitle2')}
                     </span>
-                    <div className={`absolute inset-0 bg-gradient-to-r from-[#7745A2]/5 via-[#7745A2]/10 to-[#7745A2]/5 rounded-lg transition-all duration-500 -z-10 ${titleHovered ? 'opacity-100 scale-100' : 'opacity-0 scale-95'}`}></div>
-                    {titleHovered && (
-                        <>
-                            <div className="absolute -top-2 -right-2 w-2 h-2 bg-[#7745A2] rounded-full animate-ping"></div>
-                            <div className="absolute -bottom-2 -left-2 w-1 h-1 bg-[#7745A2] rounded-full animate-ping delay-200"></div>
-                        </>
-                    )}
                 </h4>
 
                 <div
-                    className={`text-[#51564E] text-base lg:text-lg lg:text-[#7745A2] cursor-pointer relative transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'} ${subtitleHovered ? 'scale-102 text-[#7745A2]' : 'opacity-80'}`}
-                    onMouseEnter={() => setSubtitleHovered(true)}
-                    onMouseLeave={() => setSubtitleHovered(false)}
+                    className={`text-[#51564E] text-base lg:text-lg lg:text-[#7745A2] relative transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}
                 >
-                    <p className={`transition-all duration-300 text-center ${subtitleHovered ? 'tracking-wide' : ''}`}>
+                    <p className={`transition-all duration-300 text-center`}>
                         {t('subtitle')}
                     </p>
-                    <div className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-[#7745A2] to-purple-400 transition-all duration-300 ${subtitleHovered ? 'w-full opacity-100' : 'w-0 opacity-0'}`}></div>
+                    <div className={`absolute -bottom-1 left-0 h-0.5 bg-gradient-to-r from-[#7745A2] to-purple-400 transition-all duration-300`}></div>
                 </div>
             </div>
 
-            <div className={`w-full grid grid-cols-1 gap-4 lg:gap-8 lg:grid-cols-2 xlg:!grid-cols-3 z-10`}>
+            <div className={`w-full grid grid-cols-1 gap-4 lg:gap-8 lg:grid-cols-2 xlg:!grid-cols-3 z-10 px-4 sm:px-0`}>
                 {faqs.map((faq, index) => (
                     <div
                         key={index}
                         className={`
-                            min-[375px]:min-w-[340px] flex flex-col gap-2 lg:gap-4 p-6 rounded-xl cursor-pointer
+                            w-full flex flex-col gap-2 lg:gap-4 p-6 rounded-xl cursor-pointer
                             transform transition-all duration-700 ease-out
                             bg-gradient-to-br from-white via-[#F9F7FC] to-white
                             border border-[#eee]
-                            hover:scale-[1.05] hover:-rotate-[0.8deg]
+                            hover:scale-[1.02] lg:hover:scale-[1.05] 
+                            hover:-rotate-[0.8deg]
                             hover:shadow-[0_12px_32px_rgba(119,69,162,0.2)]
                             hover:border-[#d9c9f1]
                             hover:bg-gradient-to-br hover:from-[#fefcff] hover:via-[#F6F3FC] hover:to-[#fefcff]
@@ -222,6 +210,13 @@ const FAQs = () => {
                 
                 .animate-float-anime {
                     animation: float-anime 8s ease-in-out infinite;
+                }
+
+                @media (max-width: 1024px) {
+                    .general-container {
+                        padding-left: 1rem;
+                        padding-right: 1rem;
+                    }
                 }
             `}</style>
         </section>
