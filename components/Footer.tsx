@@ -45,14 +45,13 @@ const Footer = () => {
                     <div className={`flex flex-col items-center gap-6 lg:items-start transition-all duration-1000 delay-200 ${mounted ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
                         <div className={`flex flex-col items-center gap-[18.5px] lg:gap-3 lg:items-start`}>
                             {/* Enhanced Logo */}
-                            <div className="group cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95">
-                                <div className="relative overflow-hidden rounded-lg p-2 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-50 group-hover:to-indigo-50 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                            <div>
+                                <div className="relative overflow-hidden rounded-lg p-2">
                                     <Image
                                         src={"/logo.svg"}
                                         alt={"Logo"}
                                         width={100.22}
                                         height={67.35}
-                                        className="transition-all duration-300 group-hover:brightness-110"
                                     />
                                     {/* Subtle glow effect */}
                                     <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"
@@ -100,7 +99,7 @@ const Footer = () => {
                         {/* Enhanced App Store Buttons */}
                         <div className='flex items-center gap-[9.22px] lg:gap-[10.91px]'>
                             {/* App Store Button */}
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95">
+                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
                                 <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={"/app-store.svg"}
@@ -115,7 +114,7 @@ const Footer = () => {
                             </div>
 
                             {/* Play Store Button */}
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-1 active:scale-95">
+                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
                                 <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={"/play-store.svg"}

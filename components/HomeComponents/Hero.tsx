@@ -66,13 +66,13 @@ const Hero = () => {
                         <div className='flex flex-col gap-4 text-center lg:text-start'>
                             <h1 className={`font-semibold text-[30px] text-black leading-[38px] lg:text-[45px] lg:leading-[62px] xlg:text-[50px] transition-all duration-1000 delay-200 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
                                 }`}>
-                                <span className="inline-block hover:text-[#7745A2] transition-colors duration-300">
+                                <span className="inline-block">
                                     {t("title1")}
                                 </span><br />
-                                <span className="inline-block hover:text-[#7745A2] transition-colors duration-300">
+                                <span className="inline-block">
                                     {t("title2")} - {t("title3")}
                                 </span> <br />
-                                <span className='text-[#7745A2] inline-block hover:scale-105 transition-transform duration-300'>
+                                <span className='text-[#7745A2] inline-block'>
                                     {t("title4")}
                                 </span>
                                 <span className={`block text-[15px] font-medium leading-[28px] lg:hidden transition-all duration-1000 delay-400 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
@@ -90,7 +90,7 @@ const Hero = () => {
                         {/* App Store Buttons with Hover Effects */}
                         <div className={`flex items-center justify-center gap-[8.71px] lg:justify-start xlg:gap-[13px] transition-all duration-1000 delay-500 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
                             }`}>
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-1">
+                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
                                     src={"/app-store.svg"}
                                     alt={t("appStoreAlt")}
@@ -99,7 +99,7 @@ const Hero = () => {
                                     className='w-[128px] h-[42.67px] lg:w-[155px] lg:h-[53px] xlg:w-[190.97px] xlg:h-[63.66px] transition-all duration-300 group-hover:brightness-110'
                                 />
                             </div>
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-105 hover:-translate-y-1">
+                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
                                     src={"/play-store.svg"}
                                     alt={t("playStoreAlt")}
@@ -174,11 +174,8 @@ const Hero = () => {
                         )}
 
                         {/* Enhanced Fast Service Badge */}
-                        <div className={`absolute rounded-full bg-white flex items-center gap-[7.26px] shadow-hero py-[5.13px] ps-[5.13px] pe-[15.4px] right-0 top-20 md:right-[180px] md:top-[180px] lg:-right-14 xl:right-0 lg:top-10 xl:top-[95px] xl:py-[7.26px] xl:ps-[7.26px] xl:pe-[21.78px] transition-all duration-1000 delay-700 hover:scale-110 hover:shadow-lg cursor-pointer group/badge ${mounted ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'
-                            }`}
-                            style={{
-                                animation: mounted ? 'float 3s ease-in-out infinite' : 'none'
-                            }}>
+                        <div className={`absolute rounded-full z-10 bg-white flex items-center gap-[7.26px] shadow-hero py-[5.13px] ps-[5.13px] pe-[15.4px] right-0 top-20 md:right-[180px] md:top-[180px] lg:-right-14 xl:right-0 lg:top-10 xl:top-[95px] xl:py-[7.26px] xl:ps-[7.26px] xl:pe-[21.78px] transition-all duration-1000 delay-700 hover:scale-110 hover:shadow-lg cursor-pointer group/badge ${mounted ? 'translate-y-0 opacity-100' : '-translate-y-3 opacity-0'
+                            }`}>
                             <div className='rounded-full bg-[#7745A2] w-[23.09px] h-[23.09px] flex items-center justify-center xl:w-[32.67px] xl:h-[32.67px] transition-transform duration-300 group-hover/badge:rotate-12'>
                                 <Image src={"/rocket.svg"} alt='rocket' width={21.78} height={21.78} className='w-[15.4px] h-[15.4px] xl:w-[21.78px] xl:h-[21.78px]' />
                             </div>
@@ -186,11 +183,8 @@ const Hero = () => {
                         </div>
 
                         {/* Enhanced Easy Upload Badge */}
-                        <div className={`absolute rounded-full bg-white py-[5.13px] ps-[5.13px] pe-[15.4px] flex items-center gap-[7.26px] shadow-hero left-10 bottom-[100px] md:left-[180px] md:bottom-[180px] lg:left-0 lg:bottom-14 xl:left-[45px] xl:bottom-[125px] xl:py-[7.26px] xl:ps-[7.26px] xl:pe-[21.78px] transition-all duration-1000 delay-900 hover:scale-110 hover:shadow-lg cursor-pointer group/badge ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
-                            }`}
-                            style={{
-                                animation: mounted ? 'float 3s ease-in-out infinite 1.5s' : 'none'
-                            }}>
+                        <div className={`absolute rounded-full z-10 bg-white py-[5.13px] ps-[5.13px] pe-[15.4px] flex items-center gap-[7.26px] shadow-hero left-10 bottom-[100px] md:left-[180px] md:bottom-[180px] lg:left-0 lg:bottom-14 xl:left-[45px] xl:bottom-[125px] xl:py-[7.26px] xl:ps-[7.26px] xl:pe-[21.78px] transition-all duration-1000 delay-900 hover:scale-110 hover:shadow-lg cursor-pointer group/badge ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-3 opacity-0'
+                            }`}>
                             <div className='rounded-full bg-[#7745A2] w-[23.09px] h-[23.09px] flex items-center justify-center xl:w-[32.67px] xl:h-[32.67px] transition-transform duration-300 group-hover/badge:-rotate-12'>
                                 <Image src={"/white-upload.svg"} alt='upload' width={21.78} height={21.78} className='w-[15.4px] h-[15.4px] xl:w-[21.78px] xl:h-[21.78px]' />
                             </div>
@@ -205,18 +199,6 @@ const Hero = () => {
                 @keyframes float {
                     0%, 100% { transform: translateY(0px); }
                     50% { transform: translateY(-10px); }
-                }
-                
-                @keyframes phoneFloat {
-                    0%, 100% { transform: translateY(0px) rotate(0deg); }
-                    25% { transform: translateY(-8px) rotate(0.5deg); }
-                    50% { transform: translateY(-5px) rotate(0deg); }
-                    75% { transform: translateY(-12px) rotate(-0.5deg); }
-                }
-                
-                @keyframes phonePulse {
-                    0%, 100% { transform: scale(1); filter: drop-shadow(0 25px 50px rgba(119, 69, 162, 0.15)); }
-                    50% { transform: scale(1.02); filter: drop-shadow(0 30px 60px rgba(119, 69, 162, 0.25)); }
                 }
                 
                 @keyframes rotate {
