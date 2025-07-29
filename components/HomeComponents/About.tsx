@@ -99,7 +99,7 @@ const About = () => {
                     <div className='flex flex-col items-center gap-3'>
                         <h2 className={`text-black font-medium text-center text-[28px] lg:text-[36px] transition-all duration-1000 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'
                             }`}>
-                            <span className="inline-block hover:text-[#7745A2] hover:scale-110 transition-all duration-300 cursor-default">
+                            <span className="inline-block">
                                 {t("headline")}
                             </span>
                         </h2>
@@ -120,11 +120,11 @@ const About = () => {
                     <div className="relative">
                         <p className={`text-[#707070] text-center text-base lg:text-[22px] leading-relaxed transition-all duration-1200 delay-600 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
                             }`}>
-                            <span className="inline-block hover:text-[#7745A2] transition-colors duration-300">
+                            <span className="inline-block">
                                 {t('desc1')}
                             </span>
                             <br /> <br />
-                            <span className="inline-block hover:text-[#7745A2] transition-colors duration-300">
+                            <span className="inline-block">
                                 {t('desc2')}
                             </span>
                         </p>
