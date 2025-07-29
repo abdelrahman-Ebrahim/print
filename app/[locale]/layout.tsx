@@ -5,7 +5,7 @@ import Footer from "@/components/Footer"
 import { NextIntlClientProvider, hasLocale } from 'next-intl'
 import { notFound } from 'next/navigation'
 import { routing } from '@/i18n/routing'
-import { RecaptchaProvider } from "@/components/ReCaptchaProvider"
+import { RecaptchaProvider } from "@/components/RecaptchaProvider"
 
 export const metadata: Metadata = {
   title: "Print",

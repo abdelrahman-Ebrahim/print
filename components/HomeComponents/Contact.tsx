@@ -4,7 +4,8 @@ import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import React, { useState } from 'react'
 import './contact-animations.css'
-import { getRecaptchaToken } from '../ReCaptchaProvider'
+import { getRecaptchaToken } from '../RecaptchaProvider'
+
 
 
 interface FormData {
