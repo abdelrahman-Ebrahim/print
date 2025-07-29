@@ -124,11 +124,6 @@ const Features = () => {
                     to { transform: rotate(360deg); }
                 }
                 
-                @keyframes float {
-                    0%, 100% { transform: translateY(0px); }
-                    50% { transform: translateY(-8px); }
-                }
-                
                 @keyframes glow-pulse {
                     0%, 100% { box-shadow: 0 0 20px rgba(119, 69, 162, 0.3); }
                     50% { box-shadow: 0 0 30px rgba(119, 69, 162, 0.5); }
@@ -193,68 +188,6 @@ const Features = () => {
                 
                 .gear-inner > div:nth-child(4) > div {
                     animation: orbit-pulse 2s ease-in-out infinite;
-                }
-                
-                .float-animation {
-                    animation: float 3s ease-in-out infinite;
-                }
-                
-                .card-hover:hover {
-                    transform: translateY(-4px) scale(1.01);
-                    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-                }
-                
-                .card-hover:hover .icon-container {
-                    animation: glow-pulse 2s ease-in-out infinite;
-                    transform: scale(1.1);
-                }
-                
-                .card-hover:hover .shimmer-effect {
-                    background: linear-gradient(
-                        90deg,
-                        transparent,
-                        rgba(119, 69, 162, 0.1),
-                        transparent
-                    );
-                    background-size: 200% 100%;
-                    animation: shimmer 1.5s ease-in-out infinite;
-                }
-                
-                .card-hover {
-                    position: relative;
-                    overflow: hidden;
-                }
-                
-                .card-hover::before {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(
-                        90deg,
-                        transparent,
-                        rgba(119, 69, 162, 0.05),
-                        transparent
-                    );
-                    transition: left 0.5s;
-                    z-index: 1;
-                }
-                
-                .card-hover:hover::before {
-                    left: 100%;
-                }
-                
-                .icon-container {
-                    transition: all 0.3s ease;
-                    position: relative;
-                    z-index: 2;
-                }
-                
-                .text-content {
-                    position: relative;
-                    z-index: 2;
                 }
                 
                 .bg-gradient-radial {
@@ -357,18 +290,17 @@ const Features = () => {
                                         <SwiperSlide key={feature.id} className='!w-full min-[425px]:!w-[calc(50%-16px)] sm:!w-[calc(32.33%-5.33px)]'>
                                             <div
                                                 onClick={() => handleFeatureClick(index)}
-                                                className={`card-hover flex-center flex-col w-full sm:w-auto h-[167.52px] rounded-[12.71px] p-[9.65px] cursor-pointer transition-all duration-300 mx-auto ${activeIndex === index
+                                                className={`flex-center flex-col w-full sm:w-auto h-[167.52px] rounded-[12.71px] p-[9.65px] cursor-pointer transition-all duration-300 mx-auto ${activeIndex === index
                                                     ? 'bg-[#7745A214] shadow-lg shadow-[#7745A2]/20'
-                                                    : 'hover:bg-[#7745A208] hover:shadow-md'
+                                                    : ''
                                                     }`}
                                             >
-                                                <div className='shimmer-effect absolute inset-0 rounded-[12.71px]'></div>
-                                                <div className='icon-container flex-center w-[56.48px] h-[56.48px] rounded-tr-[28.09px] rounded-br-[49.15px] rounded-tl-[52.31px] rounded-bl-[66.71px] p-[0.88px] border-[0.88px] border-[#E5E7EB] bg-[#7745A21A]'>
-                                                    <Image src={feature.icon} alt={feature.title} width={28.24} height={28.24} className='transition-transform duration-300' />
+                                                <div className='flex-center w-[56.48px] h-[56.48px] rounded-tr-[28.09px] rounded-br-[49.15px] rounded-tl-[52.31px] rounded-bl-[66.71px] p-[0.88px] border-[0.88px] border-[#E5E7EB] bg-[#7745A21A]'>
+                                                    <Image src={feature.icon} alt={feature.title} width={28.24} height={28.24} />
                                                 </div>
-                                                <div className='text-content'>
-                                                    <p className='font-semibold text-xs text-black text-center pt-[11.3px] transition-colors duration-300'>{feature.title}</p>
-                                                    <p className='text-[10px] text-[#4B5563] text-center pt-[5.65px] transition-colors duration-300'>{feature.description}</p>
+                                                <div>
+                                                    <p className='font-semibold text-xs text-black text-center pt-[11.3px]'>{feature.title}</p>
+                                                    <p className='text-[10px] text-[#4B5563] text-center pt-[5.65px]'>{feature.description}</p>
                                                 </div>
                                             </div>
                                         </SwiperSlide>
@@ -407,18 +339,17 @@ const Features = () => {
                             <div
                                 key={feature.id}
                                 onClick={() => handleFeatureClick(index)}
-                                className={`card-hover flex-center flex-col w-[272.97px] rounded-[15.8px] py-[21.07px] px-[14.04px] cursor-pointer transition-all duration-300 ${activeIndex === index
+                                className={`flex-center flex-col w-[272.97px] rounded-[15.8px] py-[21.07px] px-[14.04px] cursor-pointer transition-all duration-300 ${activeIndex === index
                                     ? 'bg-[#7745A214] shadow-lg shadow-[#7745A2]/20 scale-105'
-                                    : 'hover:bg-[#7745A208] hover:shadow-md'
+                                    : ''
                                     }`}
                             >
-                                <div className='shimmer-effect absolute inset-0 rounded-[15.8px]'></div>
-                                <div className='icon-container flex-center w-[70.22px] h-[70.22px] rounded-tr-[28.09px] rounded-br-[49.15px] rounded-tl-[52.31px] rounded-bl-[66.71px] p-[0.88px] border-[0.88px] border-[#E5E7EB] bg-[#7745A21A]'>
-                                    <Image src={feature.icon} alt={feature.title} width={35.11} height={35.11} className='transition-transform duration-300' />
+                                <div className='flex-center w-[70.22px] h-[70.22px] rounded-tr-[28.09px] rounded-br-[49.15px] rounded-tl-[52.31px] rounded-bl-[66.71px] p-[0.88px] border-[0.88px] border-[#E5E7EB] bg-[#7745A21A]'>
+                                    <Image src={feature.icon} alt={feature.title} width={35.11} height={35.11} />
                                 </div>
-                                <div className='text-content'>
-                                    <p className='font-semibold text-[17.55px] text-black text-center pt-[14.04px] transition-colors duration-300'>{feature.title}</p>
-                                    <p className='text-sm text-[#4B5563] text-center pt-[7.02px] transition-colors duration-300'>{feature.description}</p>
+                                <div>
+                                    <p className='font-semibold text-[17.55px] text-black text-center pt-[14.04px]'>{feature.title}</p>
+                                    <p className='text-sm text-[#4B5563] text-center pt-[7.02px]'>{feature.description}</p>
                                 </div>
                             </div>
                         ))}
@@ -443,7 +374,7 @@ const Features = () => {
                     <div className={`self-center relative w-[357.22px] flex-center order-1 lg:order-2 lg:w-[545.37px] transition-all duration-1000 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'
                         }`}
                     >
-                        <div className='float-animation relative z-10'>
+                        <div className='relative z-10'>
                             <Image
                                 key={imageKey}
                                 src={features[activeIndex].image}
