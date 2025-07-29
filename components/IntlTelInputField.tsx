@@ -6,13 +6,6 @@ import { useLocale } from "next-intl";
 import ar from 'intl-tel-input/i18n/ar';
 import type { IntlTelInputRef } from "intl-tel-input/reactWithUtils";
 
-// Define proper types for the IntlTelInput instance
-interface IntlTelInputInstance {
-    getNumber(): string;
-    isValidNumber(): boolean;
-    getValidationError(): number;
-}
-
 const IntlTelInput = dynamic(() => import("intl-tel-input/reactWithUtils"), {
     ssr: false,
     loading: () => <div className="h-[40px] border rounded-lg animate-pulse bg-gray-100"></div>
@@ -101,7 +94,7 @@ const PhoneInput = ({
                         initialValue={value}
                         onChangeNumber={handleNumberChange}
                         onChangeValidity={handleValidationChange}
-                        onChangeErrorCode={() => { }} // Empty handler to satisfy the prop requirement
+                        onChangeErrorCode={() => {}} // Empty handler to satisfy the prop requirement
                         initOptions={{
                             initialCountry: initialCountry,
                             separateDialCode: true,
