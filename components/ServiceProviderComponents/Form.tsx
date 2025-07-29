@@ -52,7 +52,7 @@ interface ApiResponse {
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
-    
+
     // State for dynamic countries
     const [countries, setCountries] = useState<Array<{
         id: number;
@@ -63,7 +63,7 @@ const Form = () => {
     }>>([]);
     const [isLoadingCountries, setIsLoadingCountries] = useState(true);
     // const [cities, setCities] = useState<City[]>([]);
-    
+
     const [formData, setFormData] = useState<FormData>({
         name: "",
         mobile: "",
@@ -84,6 +84,7 @@ const Form = () => {
     const [apiMessage, setApiMessage] = useState('');
     const [submitError, setSubmitError] = useState('');
     const [showApiMessage, setShowApiMessage] = useState(false);
+    const [isSuccess, setIsSuccess] = useState(false); // New state to track success
     const [isPhoneValid, setIsPhoneValid] = useState(false);
     const [touched, setTouched] = useState({
         name: false,
@@ -231,6 +232,7 @@ const Form = () => {
         setApiMessage('');
         setSubmitError('');
         setShowApiMessage(false);
+        setIsSuccess(false); // Reset success state
         setErrors((prev) => ({ ...prev, api: undefined }));
     };
 
@@ -292,6 +294,7 @@ const Form = () => {
             if (data.message) {
                 setApiMessage(data.message);
                 setShowApiMessage(true);
+                setIsSuccess(data.status); // Set success state based on API response
             }
 
             if (data.status) {
@@ -321,6 +324,7 @@ const Form = () => {
             if (error.response?.data?.message) {
                 setApiMessage(error.response.data.message);
                 setShowApiMessage(true);
+                setIsSuccess(false); // Ensure it's marked as error
             } else {
                 setSubmitError(
                     error instanceof Error ? error.message : t("errors.networkError")
@@ -348,9 +352,7 @@ const Form = () => {
                 className="bg-white rounded-2xl shadow-lg p-8 md:p-12"
             >
                 {showApiMessage && (
-                    <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${apiMessage.toLowerCase().includes("success") ||
-                            apiMessage.toLowerCase().includes("completed") ||
-                            apiMessage.toLowerCase().includes("thank you")
+                    <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${isSuccess
                             ? "bg-green-100 text-green-700"
                             : "bg-red-100 text-red-700"
                         }`}>
@@ -621,7 +623,7 @@ const Form = () => {
                         <button
                             type="button"
                             className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
-                                } top-1/2 -translate-y-1/2 text-black text-2xl focus:outline-none`}
+                                } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
                             onClick={() => setShowConfirmPassword((v) => !v)}
                             tabIndex={-1}
                         >
