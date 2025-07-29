@@ -62,7 +62,7 @@ const Form = () => {
         has_university: boolean;
     }>>([]);
     const [isLoadingCountries, setIsLoadingCountries] = useState(true);
-    const [cities, setCities] = useState<City[]>([]);
+    // const [cities, setCities] = useState<City[]>([]);
     
     const [formData, setFormData] = useState<FormData>({
         name: "",
