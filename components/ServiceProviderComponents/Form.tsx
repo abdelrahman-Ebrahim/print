@@ -164,7 +164,7 @@ const Form = () => {
 
         setIsSubmitting(true);
         setErrors((prev) => ({ ...prev, api: undefined }));
-        setSuccessMessage(null); // إخفاء رسالة النجاح القديمة
+        setSuccessMessage(null);
 
         try {
             const response = await axios.post(

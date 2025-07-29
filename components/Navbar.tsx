@@ -131,16 +131,16 @@ const Navbar = () => {
                     {/* Enhanced Logo */}
                     <button
                         onClick={() => scrollToSection('hero')}
-                        className="cursor-pointer group transition-all duration-300 hover:scale-105 active:scale-95"
+                        className="cursor-pointer group"
                         aria-label="Scroll to top"
                     >
-                        <div className="relative overflow-hidden rounded-lg p-1 transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-50 group-hover:to-indigo-50 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                        <div className="relative overflow-hidden rounded-lg p-1">
                             <Image
                                 src="/logo.svg"
                                 alt='logo'
                                 width={87.38}
                                 height={58.72}
-                                className='w-[78.84px] h-[52.98px] lg:w-[87.38px] lg:h-[58.72px] transition-all duration-300 group-hover:brightness-110'
+                                className='w-[78.84px] h-[52.98px] lg:w-[87.38px] lg:h-[58.72px]'
                                 priority
                             />
                         </div>
@@ -166,12 +166,12 @@ const Navbar = () => {
 
                     {/* Desktop Join & Profile */}
                     <div className='items-center gap-6 hidden lg:flex'>
-                        <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-item transition-all duration-300 hover:scale-105'>
+                        <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-item transition-all duration-300 hover:scale-[102%]'>
                             <Link href={`/${locale}/serviceprovider`}
                                 className='flex items-center gap-[9.21px] cursor-pointer group'
                                 aria-label="Join"
                             >
-                                <div className='rounded-full p-[13.16px] bg-[#7745A2] shadow-button group-hover:bg-[#6a3d92] transition-all duration-300 group-hover:scale-105'>
+                                <div className='rounded-full p-[13.16px] bg-[#7745A2] shadow-button group-hover:bg-[#6a3d92] transition-all duration-300 group-hover:scale-[102%]'>
                                     <p className='font-medium text-sm text-white xl:text-base'>
                                         {t("join")}
                                     </p>

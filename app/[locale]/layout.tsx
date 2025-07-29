@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
-import "../globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import SplashScreen from "@/components/SplashScreen";
-import { NextIntlClientProvider, hasLocale } from 'next-intl';
-import { notFound } from 'next/navigation';
-import { routing } from '@/i18n/routing';
+import type { Metadata } from "next"
+import "../globals.css"
+import Navbar from "@/components/Navbar"
+import Footer from "@/components/Footer"
+import { NextIntlClientProvider, hasLocale } from 'next-intl'
+import { notFound } from 'next/navigation'
+import { routing } from '@/i18n/routing'
+import { RecaptchaProvider } from "@/components/ReCaptchaProvider"
 
 export const metadata: Metadata = {
   title: "Print",
@@ -13,33 +13,30 @@ export const metadata: Metadata = {
   icons: {
     icon: "/logo.svg",
   },
-};
+}
 
 export default async function RootLayout({
   children,
   params
 }: Readonly<{
-  children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  children: React.ReactNode
+  params: Promise<{ locale: string }>
 }>) {
-
-  // Ensure that the incoming `locale` is valid
-  const { locale } = await params;
+  const { locale } = await params
   if (!hasLocale(routing.locales, locale)) {
-    notFound();
+    notFound()
   }
 
   return (
     <html lang={locale} dir={locale === "ar" ? "rtl" : "ltr"}>
       <body suppressHydrationWarning className={`antialiased font-rubik`}>
         <NextIntlClientProvider>
-          <SplashScreen>
-            <Navbar />
-            {children}
-            <Footer />
-          </SplashScreen>
+          <RecaptchaProvider />
+          <Navbar />
+          {children}
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>
-  );
+  )
 }
