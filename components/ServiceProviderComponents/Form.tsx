@@ -540,7 +540,7 @@ const Form = () => {
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 ${
+                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${
                             isSubmitting ? "opacity-70 cursor-not-allowed" : ""
                         }`}
                     >
