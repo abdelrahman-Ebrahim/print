@@ -4,6 +4,8 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslations, useLocale } from "next-intl";
 import { IoSend } from "react-icons/io5";
 import axios from "axios";
+import "./form-animations.css";
+import { getRecaptchaToken } from '../RecaptchaProvider';
 
 const countries = [
     { id: 1, value: "sa", label: "Saudi Arabia" },
@@ -41,6 +43,14 @@ type FormErrors = {
     api?: string;
 };
 
+interface ApiResponse {
+    status: boolean;
+    show_message: boolean;
+    message: string;
+    code: number;
+    data: null | any;
+}
+
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
@@ -61,7 +71,9 @@ const Form = () => {
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
     const [filteredCities, setFilteredCities] = useState(cities);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [apiMessage, setApiMessage] = useState('');
+    const [submitError, setSubmitError] = useState('');
+    const [showApiMessage, setShowApiMessage] = useState(false);
 
     const handleChange = (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -71,7 +83,6 @@ const Form = () => {
         setFormData((prev) => {
             const newData = { ...prev, [name]: value };
 
-            // Filter cities when country changes
             if (name === "country") {
                 const selectedCountry = Number(value);
                 const newCities = selectedCountry
@@ -79,7 +90,6 @@ const Form = () => {
                     : cities;
                 setFilteredCities(newCities);
 
-                // Reset city if it's not available in the new country
                 if (selectedCountry && newData.city) {
                     const cityExists = newCities.some((c) => c.id === newData.city);
                     if (!cityExists) {
@@ -91,7 +101,6 @@ const Form = () => {
             return newData;
         });
 
-        // Clear error when user types
         if (errors[name as keyof FormErrors]) {
             setErrors((prev) => ({ ...prev, [name]: undefined }));
         }
@@ -103,48 +112,40 @@ const Form = () => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+])[^\s]{8,64}$/;
 
-        // Name validation
         if (!formData.name.trim()) {
             newErrors.name = t("errors.nameRequired");
         }
 
-        // Mobile validation
         if (!formData.mobile.trim()) {
             newErrors.mobile = t("errors.mobileRequired");
         } else if (!phoneRegex.test(formData.mobile)) {
             newErrors.mobile = t("errors.mobileInvalid");
         }
 
-        // Email validation
         if (!formData.email.trim()) {
             newErrors.email = t("errors.emailRequired");
         } else if (!emailRegex.test(formData.email)) {
             newErrors.email = t("errors.emailInvalid");
         }
 
-        // Commercial name validation
         if (!formData.commercial_name.trim()) {
             newErrors.commercial_name = t("errors.commercialNameRequired");
         }
 
-        // Country validation
         if (!formData.country) {
             newErrors.country = t("errors.countryRequired");
         }
 
-        // City validation
         if (!formData.city) {
             newErrors.city = t("errors.cityRequired");
         }
 
-        // Password validation
         if (!formData.password) {
             newErrors.password = t("errors.passwordRequired");
         } else if (!passwordRegex.test(formData.password)) {
             newErrors.password = t("errors.passwordInvalid");
         }
 
-        // Confirm password validation
         if (!formData.confirmPassword) {
             newErrors.confirmPassword = t("errors.confirmPasswordRequired");
         } else if (formData.password !== formData.confirmPassword) {
@@ -155,6 +156,13 @@ const Form = () => {
         return Object.keys(newErrors).length === 0;
     };
 
+    const clearMessages = () => {
+        setApiMessage('');
+        setSubmitError('');
+        setShowApiMessage(false);
+        setErrors((prev) => ({ ...prev, api: undefined }));
+    };
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
@@ -163,22 +171,26 @@ const Form = () => {
         }
 
         setIsSubmitting(true);
-        setErrors((prev) => ({ ...prev, api: undefined }));
-        setSuccessMessage(null);
+        clearMessages();
 
         try {
+            const token = await getRecaptchaToken('service_provider_signup');
+
+            const submissionData = {
+                name: formData.name.trim(),
+                mobile: formData.mobile.trim(),
+                mobile_code: "+966",
+                email: formData.email.trim(),
+                password: formData.password,
+                commercial_name: formData.commercial_name.trim(),
+                country: formData.country,
+                city: formData.city,
+                recaptchaToken: token
+            };
+
             const response = await axios.post(
-                "/api/service-provider/signup",
-                {
-                    name: formData.name,
-                    mobile: formData.mobile,
-                    mobile_code: "+966",
-                    email: formData.email,
-                    password: formData.password,
-                    commercial_name: formData.commercial_name,
-                    country: formData.country,
-                    city: formData.city,
-                },
+                "/api/frontend/service-provider/signup",
+                submissionData,
                 {
                     headers: {
                         "Content-Type": "application/json",
@@ -187,16 +199,15 @@ const Form = () => {
                 }
             );
 
-            const data = response.data;
+            const data: ApiResponse = response.data;
 
-            if (!data.status) {
-                if (data.message) {
-                    setErrors((prev) => ({ ...prev, api: data.message }));
-                } else {
-                    setErrors((prev) => ({ ...prev, api: t("errors.submissionFailed") }));
-                }
-            } else {
-                setSuccessMessage(t("successMessage")); // أضف رسالة النجاح من الترجمة أو نص ثابت
+            // Always show API message if available
+            if (data.message) {
+                setApiMessage(data.message);
+                setShowApiMessage(true);
+            }
+
+            if (data.status) {
                 setFormData({
                     name: "",
                     mobile: "",
@@ -209,11 +220,14 @@ const Form = () => {
                 });
             }
         } catch (error: any) {
-            console.error("Registration error:", error);
-            setErrors((prev) => ({
-                ...prev,
-                api: t("errors.networkError"),
-            }));
+            if (error.response?.data?.message) {
+                setApiMessage(error.response.data.message);
+                setShowApiMessage(true);
+            } else {
+                setSubmitError(
+                    error instanceof Error ? error.message : t("errors.networkError")
+                );
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -235,21 +249,27 @@ const Form = () => {
                 onSubmit={handleSubmit}
                 className="bg-white rounded-2xl shadow-lg p-8 md:p-12"
             >
-                {successMessage && (
-                    <div className="mb-6 p-4 bg-green-100 text-green-700 rounded-lg flex flex-col gap-2">
-                        {successMessage}
+                {showApiMessage && (
+                    <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${
+                        apiMessage.toLowerCase().includes("success") || 
+                        apiMessage.toLowerCase().includes("completed") || 
+                        apiMessage.toLowerCase().includes("thank you")
+                            ? "bg-green-100 text-green-700" 
+                            : "bg-red-100 text-red-700"
+                    }`}>
+                        {apiMessage}
                     </div>
                 )}
-                {errors.api && (
+
+                {submitError && !showApiMessage && (
                     <div className="mb-6 p-4 bg-red-100 text-red-700 rounded-lg flex flex-col gap-2">
-                        {errors.api}
+                        {submitError}
                     </div>
                 )}
 
                 <div className="flex flex-wrap -mx-3">
-                    {/* Name */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("name")}
                         </label>
                         <input
@@ -258,7 +278,7 @@ const Form = () => {
                             placeholder={t("namePlaceholder")}
                             value={formData.name}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.name ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 ${errors.name ? "border-red-500" : ""
                                 }`}
                         />
                         {errors.name && (
@@ -266,9 +286,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Mobile Number */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("mobile")}
                         </label>
                         <input
@@ -277,7 +296,7 @@ const Form = () => {
                             placeholder={t("mobilePlaceholder")}
                             value={formData.mobile}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.mobile ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 ${errors.mobile ? "border-red-500" : ""
                                 }`}
                         />
                         {errors.mobile && (
@@ -285,9 +304,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Email Address */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("email")}
                         </label>
                         <input
@@ -296,7 +314,7 @@ const Form = () => {
                             placeholder={t("emailPlaceholder")}
                             value={formData.email}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.email ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 ${errors.email ? "border-red-500" : ""
                                 }`}
                         />
                         {errors.email && (
@@ -304,9 +322,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Commercial Name */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("commercialName")}
                         </label>
                         <input
@@ -315,7 +332,7 @@ const Form = () => {
                             placeholder={t("commercialNamePlaceholder")}
                             value={formData.commercial_name}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none ${errors.commercial_name ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 ${errors.commercial_name ? "border-red-500" : ""
                                 }`}
                         />
                         {errors.commercial_name && (
@@ -323,9 +340,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Country */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("country")}
                         </label>
                         <div className="relative">
@@ -335,7 +351,7 @@ const Form = () => {
                                 onChange={handleChange}
                                 onFocus={() => setIsCountryOpen(true)}
                                 onBlur={() => setIsCountryOpen(false)}
-                                className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none appearance-none transition-shadow duration-200 ${errors.country ? "border-red-500" : "focus:border-purple-600 focus:shadow-lg"
+                                className={`form-select w-full px-4 py-2 appearance-none ${errors.country ? "border-red-500" : ""
                                     }`}
                                 style={{
                                     WebkitAppearance: "none",
@@ -388,9 +404,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* City */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("city")}
                         </label>
                         <div className="relative">
@@ -400,7 +415,7 @@ const Form = () => {
                                 onChange={handleChange}
                                 onFocus={() => setIsCityOpen(true)}
                                 onBlur={() => setIsCityOpen(false)}
-                                className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none appearance-none transition-shadow duration-200 ${errors.city ? "border-red-500" : "focus:border-purple-600 focus:shadow-lg"
+                                className={`form-select w-full px-4 py-2 appearance-none ${errors.city ? "border-red-500" : ""
                                     }`}
                                 style={{
                                     WebkitAppearance: "none",
@@ -454,9 +469,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Password */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("password")}
                         </label>
                         <input
@@ -471,12 +485,12 @@ const Form = () => {
                             }
                             value={formData.password}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none pr-12 pl-4 ${errors.password ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 pr-12 ${errors.password ? "border-red-500" : ""
                                 }`}
                         />
                         <button
                             type="button"
-                            className={`absolute ${locale === "ar" ? "left-6" : "right-6"
+                            className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
                                 } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
                             onClick={() => setShowPassword((v) => !v)}
                             tabIndex={-1}
@@ -488,9 +502,8 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Confirm Password */}
                     <div className="w-full md:w-1/2 px-3 mb-6 relative">
-                        <label className="block text-sm font-semibold mb-2">
+                        <label className="form-label block text-sm font-semibold mb-2">
                             {t("confirmPassword")}
                         </label>
                         <input
@@ -505,12 +518,12 @@ const Form = () => {
                             }
                             value={formData.confirmPassword}
                             onChange={handleChange}
-                            className={`w-full border-[#E5E7EB] border rounded-[6px] px-4 py-2 focus:outline-none pr-12 pl-4 ${errors.confirmPassword ? "border-red-500" : "focus:border-purple-600"
+                            className={`form-input w-full px-4 py-2 pr-12 ${errors.confirmPassword ? "border-red-500" : ""
                                 }`}
                         />
                         <button
                             type="button"
-                            className={`absolute ${locale === "ar" ? "left-6" : "right-6"
+                            className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
                                 } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
                             onClick={() => setShowConfirmPassword((v) => !v)}
                             tabIndex={-1}
@@ -523,18 +536,19 @@ const Form = () => {
                     </div>
                 </div>
 
-                <div className="flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2">
+                <div className="submit-button-container flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2">
                     <button
                         type="submit"
                         disabled={isSubmitting}
-                        className={`flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md hover:bg-purple-800 transition-all duration-200 ${isSubmitting ? "opacity-70 cursor-not-allowed" : ""
-                            }`}
+                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 ${
+                            isSubmitting ? "opacity-70 cursor-not-allowed" : ""
+                        }`}
                     >
                         {isSubmitting ? t("submitting") : t("submit")}
                         <span className="inline-block"></span>
                     </button>
                     <IoSend
-                        className={`text-2xl ${locale === "ar" ? "rtl-flip" : ""}`}
+                        className={`arrow-icon text-2xl ${locale === "ar" ? "rtl-flip" : ""}`}
                         style={locale === "ar" ? { transform: "scaleX(-1)" } : {}}
                     />
                 </div>
