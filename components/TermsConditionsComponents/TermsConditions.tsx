@@ -6,7 +6,7 @@ export default function TermsConditions() {
     const t = useTranslations("Terms")
 
     return (
-        <div className="min-h-screen bg-white flex justify-center py-8 pt-20 lg:pt-32 px-2">
+        <div className="min-h-screen bg-white flex justify-center py-8 pt-20 lg:pt-32 px-2 mt-10 lg:mt-0">
             <div className="general-container xlg:mx-auto xlg:max-w-[1920px]">
                 <h1 className="text-x font-semibold text-[#7745A2] mb-8 tracking-wide uppercase">{t("title")}</h1>
 

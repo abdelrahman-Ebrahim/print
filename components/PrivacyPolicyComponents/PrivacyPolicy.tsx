@@ -5,7 +5,7 @@ import React from 'react'
 export default function PrivacyPolicy() {
     const t = useTranslations("PrivacyPolicy")
     return (
-        <div className="pb-10 pt-20 min-h-screen lg:pt-32">
+        <div className="pb-10 pt-20 min-h-screen lg:pt-32 mt-10 lg:mt-10">
             <div className="general-container xlg:mx-auto xlg:max-w-[1920px] bg-white">
                 <h4 className="text-[#7745A2] font-bold text-xs tracking-widest mb-4 uppercase">{t("title")}</h4>
                 <ul className="bg-[#FBF0DA] rounded-lg p-6 mb-8 list-none">
