@@ -31,6 +31,28 @@ const Navbar = () => {
     }
 
     useEffect(() => {
+        // Check if there's a hash in the URL when the component mounts or pathname changes
+        const handleHashScroll = () => {
+            if (pathname === `/${locale}` && window.location.hash) {
+                const sectionId = window.location.hash.substring(1)
+                setTimeout(() => {
+                    scrollToSectionWithOffset(sectionId)
+                }, 100) // Small delay to ensure the page is rendered
+            }
+        }
+
+        handleHashScroll()
+
+        // Also handle hash changes without page reload
+        const handleHashChange = () => {
+            handleHashScroll()
+        }
+
+        window.addEventListener('hashchange', handleHashChange)
+        return () => window.removeEventListener('hashchange', handleHashChange)
+    }, [pathname, locale])
+
+    useEffect(() => {
         const handleScroll = (): void => {
             setIsScrolled(window.scrollY > 50)
         }
@@ -76,6 +98,29 @@ const Navbar = () => {
         }
     }, [pathname, locale])
 
+    // Click outside the mobile navbar to close
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                isMenuOpen &&
+                navbarRef.current &&
+                !navbarRef.current.contains(event.target as Node)
+            ) {
+                closeMenu();
+            }
+        };
+
+        if (isMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isMenuOpen]);
+
+
+
     const switchLanguage = (): void => {
         const newLocale = locale === "en" ? "ar" : "en"
         localStorage.setItem("last_locale", newLocale)
@@ -90,16 +135,21 @@ const Navbar = () => {
 
     const scrollToSection = (sectionId: string): void => {
         setActiveSection(sectionId)
+        closeMenu(); // Close menu immediately when any section is clicked
 
         if (pathname !== `/${locale}`) {
+            // Navigate to the landing page with the section hash
             router.push(`/${locale}#${sectionId}`)
             return
         }
 
+        // Handle scroll on the same page
+        scrollToSectionWithOffset(sectionId)
+    }
+
+    const scrollToSectionWithOffset = (sectionId: string) => {
         const section = document.getElementById(sectionId)
         if (section) {
-            closeMenu()
-
             const navbarHeight = navbarRef.current?.offsetHeight || 0
             const sectionPosition = section.offsetTop - navbarHeight
 
@@ -122,8 +172,8 @@ const Navbar = () => {
         <header
             ref={navbarRef}
             className={`py-4 lg:py-5 fixed top-0 left-0 z-50 w-full flex items-center justify-center transition-all duration-500 ${isScrolled
-                    ? 'bg-white/95 backdrop-blur-md shadow-navbar shadow-black/5'
-                    : 'bg-white/90 backdrop-blur-sm'
+                ? 'bg-white/95 backdrop-blur-md shadow-navbar shadow-black/5'
+                : 'bg-white/90 backdrop-blur-sm'
                 }`}
         >
             <nav className='px-4 w-full max-w-[1536px] lg:px-20 xl:px-[128px]'>
@@ -218,6 +268,7 @@ const Navbar = () => {
                     className={`fixed inset-0 h-fit pb-10 rounded-b-2xl bg-white/95 backdrop-blur-md z-40 lg:hidden transition-all duration-500 ease-out shadow-2xl shadow-black/20 ${isMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
                         }`}
                     dir={locale === 'ar' ? 'rtl' : 'ltr'}
+                    onClick={(e) => { e.stopPropagation() }}
                 >
                     <div className="flex justify-between items-center py-2 px-5 border-b-2 border-gradient-to-r from-purple-200 to-indigo-200 bg-gradient-to-r">
                         <button
@@ -257,8 +308,8 @@ const Navbar = () => {
                                     <button
                                         onClick={() => scrollToSection(item.id)}
                                         className={`relative w-full text-left p-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden group ${activeSection === item.id
-                                                ? 'text-white bg-gradient-to-r from-[#7745A2] to-[#9B59B6] shadow-lg shadow-purple-300/40'
-                                                : 'text-black hover:text-[#7745A2] hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:shadow-purple-200/30'
+                                            ? 'text-white bg-gradient-to-r from-[#7745A2] to-[#9B59B6] shadow-lg shadow-purple-300/40'
+                                            : 'text-black hover:text-[#7745A2] hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:shadow-purple-200/30'
                                             }`}
                                         aria-label={`Scroll to ${item.text}`}
                                     >
@@ -274,7 +325,7 @@ const Navbar = () => {
 
                             {/* Enhanced Mobile Join Button */}
                             <div className="mx-auto mt-4 group">
-                                <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg shadow-gray-300/40 group-hover:shadow-xl group-hover:shadow-purple-300/50 transition-all duration-300 group-hover:scale-105 w-fit'>
+                                <div onClick={closeMenu} className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg shadow-gray-300/40 group-hover:shadow-xl group-hover:shadow-purple-300/50 transition-all duration-300 group-hover:scale-105 w-fit'>
                                     <Link href={`/${locale}/serviceprovider`}
                                         className='flex items-center gap-[9.21px] cursor-pointer group/mobile-button'
                                         aria-label="Join"
