@@ -119,8 +119,6 @@ const Navbar = () => {
         };
     }, [isMenuOpen]);
 
-
-
     const switchLanguage = (): void => {
         const newLocale = locale === "en" ? "ar" : "en"
         localStorage.setItem("last_locale", newLocale)
@@ -171,17 +169,14 @@ const Navbar = () => {
     return (
         <header
             ref={navbarRef}
-            className={`py-4 lg:py-5 fixed top-0 left-0 z-50 w-full flex items-center justify-center transition-all duration-500 ${isScrolled
-                ? 'bg-white/95 backdrop-blur-md shadow-navbar shadow-black/5'
-                : 'bg-white/90 backdrop-blur-sm'
-                }`}
+            className={`py-[10.64px] lg:py-5 fixed top-0 left-0 z-50 w-full flex items-center justify-center bg-white transition-all duration-500 shadow-mobile-navbar lg:shadow-navbar`}
         >
             <nav className='px-4 w-full max-w-[1536px] lg:px-20 xl:px-[128px]'>
                 <div className='flex items-center justify-between gap-6'>
                     {/* Enhanced Logo */}
                     <button
                         onClick={() => scrollToSection('hero')}
-                        className="cursor-pointer group"
+                        className="cursor-pointer group hidden lg:block"
                         aria-label="Scroll to top"
                     >
                         <div className="relative overflow-hidden rounded-lg p-1">
@@ -247,90 +242,87 @@ const Navbar = () => {
                         </button>
                     </div>
 
-                    {/* Enhanced Mobile Menu Button */}
-                    <button
-                        className='lg:hidden p-3 rounded-full hover:bg-gradient-to-br hover:from-purple-50 hover:to-indigo-50 hover:shadow-lg hover:shadow-purple-200/30 transition-all duration-300 hover:scale-110 active:scale-95 group'
-                        onClick={toggleMenu}
-                        aria-label="Toggle menu"
-                    >
-                        <Image
-                            src={"/burgerIcon.svg"}
-                            alt={"menu"}
-                            width={32}
-                            height={32}
-                            className="transition-transform duration-300 group-hover:rotate-180 group-hover:scale-110"
-                        />
-                    </button>
-                </div>
-
-                {/* Enhanced Mobile Menu */}
-                <div
-                    className={`fixed inset-0 h-fit pb-10 rounded-b-2xl bg-white/95 backdrop-blur-md z-40 lg:hidden transition-all duration-500 ease-out shadow-2xl shadow-black/20 ${isMenuOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0"
-                        }`}
-                    dir={locale === 'ar' ? 'rtl' : 'ltr'}
-                    onClick={(e) => { e.stopPropagation() }}
-                >
-                    <div className="flex justify-between items-center py-2 px-5 border-b-2 border-gradient-to-r from-purple-200 to-indigo-200 bg-gradient-to-r">
-                        <button
-                            onClick={() => scrollToSection('hero')}
-                            className="cursor-pointer group transition-all duration-300 hover:scale-105 active:scale-95"
-                            aria-label="Scroll to top"
-                        >
-                            <div className="p-1 rounded-lg transition-all duration-300 group-hover:bg-gradient-to-r group-hover:from-purple-50 group-hover:to-indigo-50">
+                    {/* New Mobile Navbar Design */}
+                    <div className='flex items-center justify-between w-full lg:hidden'>
+                        <div className='flex items-center gap-[14px]'>
+                            {/* Enhanced Mobile Menu Button Small Screen */}
+                            <button
+                                className='lg:hidden rounded-full hover:bg-gradient-to-br hover:from-purple-50 hover:to-indigo-50 hover:shadow-lg hover:shadow-purple-200/30 transition-all duration-300 hover:scale-110 active:scale-95 group'
+                                onClick={toggleMenu}
+                                aria-label="Toggle menu"
+                            >
                                 <Image
-                                    src="/logo.svg"
-                                    alt='logo'
-                                    width={87.38}
-                                    height={58.72}
-                                    className='w-[60px] h-auto transition-all duration-300 group-hover:brightness-110'
+                                    src={isMenuOpen ? "/close-icon.svg" : "/burgerIcon.svg"}
+                                    alt={isMenuOpen ? "close" : "menu"}
+                                    width={32}
+                                    height={32}
+                                    className="transition-transform duration-300 group-hover:scale-110 cursor-pointer"
                                 />
-                            </div>
-                        </button>
-                        <button
-                            onClick={closeMenu}
-                            className="size-12 flex items-center justify-center rounded-full hover:bg-gradient-to-br hover:from-red-50 hover:to-pink-50 hover:shadow-lg hover:shadow-red-200/30 transition-all duration-300 hover:scale-110 active:scale-95 group"
-                            aria-label="Close menu"
-                        >
+                            </button>
+                            {/* Navbar Logo Small Screens */}
                             <Image
-                                src="/close-icon.svg"
-                                alt={"close"}
-                                width={24}
-                                height={24}
-                                className="transition-transform duration-300 group-hover:rotate-90 group-hover:scale-110"
+                                src="/logo.svg"
+                                alt='logo'
+                                width={57.62}
+                                height={38.72}
+                                className='lg:hidden'
                             />
+                        </div>
+
+                        {/* Language Switcher Button Small Screen */}
+                        <button
+                            onClick={() => {
+                                switchLanguage()
+                                closeMenu()
+                            }}
+                            className='relative flex items-center justify-center py-[9.8px] px-[10.62px] rounded-full w-10 h-10 bg-gradient-to-br from-gray-200 to-gray-300 border-[0.82px] border-[#7745A2] hover:border-[#9B59B6] hover:bg-gradient-to-br hover:from-purple-100 hover:to-indigo-100 transition-all duration-300 cursor-pointer group hover:scale-110 hover:shadow-lg hover:shadow-purple-300/40 active:scale-95'
+                            aria-label="Change language"
+                        >
+                            <p className='relative z-10 text-black font-medium text-[13.07px] uppercase'>
+                                {locale === 'en' ? 'AR' : 'EN'}
+                            </p>
                         </button>
                     </div>
+                </div>
 
-                    <div className="pt-2">
-                        <ul className="flex flex-col gap-2">
+                {/* Enhanced Mobile Menu - Now drops down from bottom of navbar */}
+                <div
+                    className={`lg:hidden bg-white transition-all duration-500 ease-out overflow-hidden ${isMenuOpen
+                            ? "max-h-screen opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`}
+                    dir={locale === 'ar' ? 'rtl' : 'ltr'}
+                >
+                    <div className="py-8">
+                        <ul className="flex flex-col gap-4">
                             {navItems.map((item, index) => (
-                                <li key={index} className="px-4">
+                                <li key={index} className="">
                                     <button
                                         onClick={() => scrollToSection(item.id)}
-                                        className={`relative w-full text-left p-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 hover:shadow-md overflow-hidden group ${activeSection === item.id
-                                            ? 'text-white bg-gradient-to-r from-[#7745A2] to-[#9B59B6] shadow-lg shadow-purple-300/40'
-                                            : 'text-black hover:text-[#7745A2] hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:shadow-purple-200/30'
+                                        className={`relative w-full text-left rounded-xl font-semibold h-[28px] transition-all duration-300 overflow-hidden group ${activeSection === item.id
+                                            ? 'text-[#7745A2]'
+                                            : 'text-black hover:text-[#7745A2] '
                                             }`}
                                         aria-label={`Scroll to ${item.text}`}
                                     >
-                                        <span className="relative z-10">
+                                        <span className="relative z-10 px-[6px] cursor-pointer">
                                             {String(item.text)}
                                         </span>
                                         {activeSection !== item.id && (
-                                            <div className="absolute inset-0 bg-gradient-to-r from-[#7745A2]/10 to-[#9B59B6]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                                            <div className="absolute inset-0duration-300"></div>
                                         )}
                                     </button>
                                 </li>
                             ))}
 
                             {/* Enhanced Mobile Join Button */}
-                            <div className="mx-auto mt-4 group">
-                                <div onClick={closeMenu} className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-gradient-to-r from-gray-100 to-gray-200 shadow-lg shadow-gray-300/40 group-hover:shadow-xl group-hover:shadow-purple-300/50 transition-all duration-300 group-hover:scale-105 w-fit'>
+                            <div className="mt-2 group">
+                                <div onClick={closeMenu} className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-join-button transition-all duration-300 w-fit'>
                                     <Link href={`/${locale}/serviceprovider`}
                                         className='flex items-center gap-[9.21px] cursor-pointer group/mobile-button'
                                         aria-label="Join"
                                     >
-                                        <div className='rounded-full p-[13.16px] bg-gradient-to-r from-[#7745A2] to-[#9B59B6] shadow-lg shadow-purple-400/40 group-hover/mobile-button:shadow-xl group-hover/mobile-button:shadow-purple-400/60 group-hover/mobile-button:scale-105 transition-all duration-300'>
+                                        <div className='rounded-full p-[13.16px] bg-gradient-to-r from-[#7745A2] to-[#9B59B6] shadow-lg transition-all duration-300'>
                                             <p className='font-medium text-sm text-white xl:text-base group-hover/mobile-button:text-gray-100 transition-colors duration-300'>
                                                 {t("join")}
                                             </p>
@@ -340,28 +332,11 @@ const Navbar = () => {
                                             alt='arrow'
                                             width={26.2}
                                             height={20.89}
-                                            className={`group-hover/mobile-button:scale-110 transition-all duration-300 ${locale === 'ar' ? 'transform rotate-180 group-hover/mobile-button:-translate-x-2' : 'group-hover/mobile-button:translate-x-2'
+                                            className={`transition-all duration-300 ${locale === 'ar' ? 'transform rotate-180 group-hover/mobile-button:-translate-x-2' : 'group-hover/mobile-button:translate-x-2'
                                                 }`}
                                         />
                                     </Link>
                                 </div>
-                            </div>
-
-                            {/* Enhanced Mobile Language Switch */}
-                            <div className="px-4 mt-4">
-                                <button
-                                    onClick={() => {
-                                        switchLanguage()
-                                        closeMenu()
-                                    }}
-                                    className='relative flex items-center justify-center p-3 rounded-full w-12 h-12 bg-gradient-to-br from-gray-200 to-gray-300 border-2 border-[#7745A2] hover:border-[#9B59B6] hover:bg-gradient-to-br hover:from-purple-100 hover:to-indigo-100 transition-all duration-300 cursor-pointer group hover:scale-110 hover:shadow-lg hover:shadow-purple-300/40 active:scale-95 mx-auto'
-                                    aria-label="Change language"
-                                >
-                                    <div className="absolute inset-0 rounded-full bg-gradient-to-br from-purple-400/20 to-indigo-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                                    <p className='relative z-10 text-black font-medium uppercase group-hover:text-[#7745A2] transition-colors duration-300'>
-                                        {locale === 'en' ? 'AR' : 'EN'}
-                                    </p>
-                                </button>
                             </div>
                         </ul>
                     </div>

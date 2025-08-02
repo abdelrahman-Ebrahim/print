@@ -50,7 +50,10 @@
   --shadow-item: 0px 0.53px 0.53px 0px #00000040 inset;
   --shadow-button: 0px 0.79px 1.05px 0px #00000040;
   --shadow-form: 0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A;
+  --shadow-mobile-navbar: 0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A;
+  --shadow-join-button: 0px 0.44px 0.44px 0px #00000040 inset;
   --font-rubik: "Rubik", "sans-serif";
+  
 }
 
 

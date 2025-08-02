@@ -14,7 +14,7 @@ const Hero = () => {
     return (
         <section
             id='hero'
-            className='general-container flex-center w-full mt-[85px] bg-[#7745A20A] lg:pt-20 pb-10 xlg:mt-0 xlg:!pt-[128px] xlg:pb-[80px] relative overflow-hidden'
+            className='general-container flex-center w-full mt-[62px] bg-[#7745A20A] lg:pt-20 pb-10 xlg:mt-0 xlg:!pt-[128px] xlg:pb-[80px] relative overflow-hidden'
         >
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none">

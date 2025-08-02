@@ -63,7 +63,7 @@ const Footer = () => {
                             </div>
 
                             {/* Enhanced Social Icons */}
-                            <div className='flex items-center gap-5'>
+                            <div className='flex items-center gap-1'>
                                 {socialIcons.map((icon, index) => (
                                     <div
                                         key={index}
