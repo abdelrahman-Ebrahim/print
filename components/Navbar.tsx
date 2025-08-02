@@ -56,6 +56,7 @@ const Navbar = () => {
         const handleScroll = (): void => {
             setIsScrolled(window.scrollY > 50)
         }
+        console.log(isScrolled);
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
