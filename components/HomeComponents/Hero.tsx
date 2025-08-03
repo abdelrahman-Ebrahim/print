@@ -1,9 +1,10 @@
 "use client"
-import { useTranslations } from 'next-intl'
+import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 const Hero = () => {
+    const locale = useLocale();
     const t = useTranslations("Hero")
     const [mounted, setMounted] = useState(false)
 
@@ -92,7 +93,7 @@ const Hero = () => {
                             }`}>
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
-                                    src={"/app-store.svg"}
+                                    src={locale === "ar" ? "/app-store-ar.png" : "/app-store-en.png"}
                                     alt={t("appStoreAlt")}
                                     width={190.97}
                                     height={63.66}
@@ -101,7 +102,7 @@ const Hero = () => {
                             </div>
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
-                                    src={"/play-store.svg"}
+                                    src={locale === "ar" ? "/play-store-ar.png" : "/play-store-en.png"}
                                     alt={t("playStoreAlt")}
                                     width={214.84}
                                     height={63.66}

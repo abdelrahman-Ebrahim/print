@@ -102,7 +102,7 @@ const Footer = () => {
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
                                 <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
-                                        src={"/app-store.svg"}
+                                        src={locale === "ar" ? "/app-store-ar.png" : "/app-store-en.png"}
                                         alt={t('appStoreAlt')}
                                         width={160.22}
                                         height={53.41}
@@ -117,7 +117,7 @@ const Footer = () => {
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
                                 <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
-                                        src={"/play-store.svg"}
+                                        src={locale === "ar" ? "/play-store-ar.png" : "/play-store-en.png"}
                                         alt={t('playStoreAlt')}
                                         width={180.25}
                                         height={53.41}
