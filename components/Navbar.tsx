@@ -300,7 +300,7 @@ const Navbar = () => {
                                 <li key={index} className="">
                                     <button
                                         onClick={() => scrollToSection(item.id)}
-                                        className={`relative w-full text-left rounded-xl font-semibold h-[28px] transition-all duration-300 overflow-hidden group ${activeSection === item.id
+                                        className={`relative w-full text-start rounded-xl font-semibold h-[28px] transition-all duration-300 overflow-hidden group ${activeSection === item.id
                                             ? 'text-[#7745A2]'
                                             : 'text-black hover:text-[#7745A2] '
                                             }`}
