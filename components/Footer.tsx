@@ -17,7 +17,7 @@ const Footer = () => {
         { src: "/xIcon.svg", alt: "X", name: "X", url: "https://x.com/printdotsa" },
         { src: "/facebookIcon.svg", alt: "Facebook", name: "Facebook", url: "https://www.facebook.com/PrintDotSa/" },
         { src: "/instagramIcon.svg", alt: "Instagram", name: "Instagram", url: "https://www.instagram.com/printdotsa" },
-        { src: "/linkedinIcon.svg", alt: "LinkedIn", name: "LinkedIn", url: "https://www.linkedin.com" },
+        { src: "/linkedinIcon.svg", alt: "LinkedIn", name: "LinkedIn", url: "https://www.linkedin.com/" },
         { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" }
     ]
 
@@ -105,8 +105,8 @@ const Footer = () => {
                         {/* Enhanced App Store Buttons */}
                         <div className='flex items-center gap-[9.22px] lg:gap-[10.91px]'>
                             {/* App Store Button */}
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
-                                <Link href={appStoreLink} target='_blank' rel='noopener noreferrer' className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                            <Link href={appStoreLink} target='_blank' rel='noopener noreferrer' className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
+                                <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={locale === "ar" ? "/app-store-ar.png" : "/app-store-en.png"}
                                         alt={t('appStoreAlt')}
@@ -116,12 +116,12 @@ const Footer = () => {
                                     />
                                     {/* Shimmer effect on hover */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-                                </Link>
-                            </div>
+                                </div>
+                            </Link>
 
                             {/* Play Store Button */}
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
-                                <Link href={playStoreLink} target='_blank' rel="noopener noreferrer" className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                            <Link href={playStoreLink} target='_blank' rel='noopener noreferrer' className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
+                                <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={locale === "ar" ? "/play-store-ar.png" : "/play-store-en.png"}
                                         alt={t('playStoreAlt')}
@@ -131,8 +131,8 @@ const Footer = () => {
                                     />
                                     {/* Shimmer effect on hover */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-                                </Link>
-                            </div>
+                                </div>
+                            </Link>
                         </div>
 
                         {/* Copyright with hover effect */}
