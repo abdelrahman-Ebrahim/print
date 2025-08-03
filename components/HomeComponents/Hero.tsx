@@ -1,12 +1,16 @@
 "use client"
 import { useLocale, useTranslations } from 'next-intl'
 import Image from 'next/image'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 const Hero = () => {
     const locale = useLocale();
     const t = useTranslations("Hero")
     const [mounted, setMounted] = useState(false)
+
+    const appStoreLink = "https://apps.apple.com/sa/app/%D8%A7%D8%B7%D8%A8%D8%B9-print-sa/id1513699123"
+    const playStoreLink = "https://play.google.com/store/apps/details?id=com.print.printing.android&pli=1"
 
     useEffect(() => {
         setMounted(true)
@@ -91,7 +95,7 @@ const Hero = () => {
                         {/* App Store Buttons with Hover Effects */}
                         <div className={`flex items-center justify-center gap-[8.71px] lg:justify-start xlg:gap-[13px] transition-all duration-1000 delay-500 ${mounted ? 'translate-y-0 opacity-100' : 'translate-y-5 opacity-0'
                             }`}>
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
+                            <Link href={appStoreLink} target='_blank' rel='noopener noreferrer' className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
                                     src={locale === "ar" ? "/app-store-ar.png" : "/app-store-en.png"}
                                     alt={t("appStoreAlt")}
@@ -99,8 +103,8 @@ const Hero = () => {
                                     height={63.66}
                                     className='w-[128px] h-[42.67px] lg:w-[155px] lg:h-[53px] xlg:w-[190.97px] xlg:h-[63.66px] transition-all duration-300 group-hover:brightness-110'
                                 />
-                            </div>
-                            <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
+                            </Link>
+                            <Link href={playStoreLink} target='_blank' rel='noopener noreferrer' className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5">
                                 <Image
                                     src={locale === "ar" ? "/play-store-ar.png" : "/play-store-en.png"}
                                     alt={t("playStoreAlt")}
@@ -108,7 +112,7 @@ const Hero = () => {
                                     height={63.66}
                                     className='w-[144px] h-[42.67px] lg:w-[196px] lg:h-[53px] xlg:w-[214.84px] xlg:h-[63.66px] transition-all duration-300 group-hover:brightness-110'
                                 />
-                            </div>
+                            </Link>
                         </div>
                     </div>
                 </div>

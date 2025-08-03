@@ -14,12 +14,15 @@ const Footer = () => {
     }, [])
 
     const socialIcons = [
-        { src: "/xIcon.svg", alt: "X", name: "X" },
-        { src: "/facebookIcon.svg", alt: "Facebook", name: "Facebook" },
-        { src: "/instagramIcon.svg", alt: "Instagram", name: "Instagram" },
-        { src: "/linkedinIcon.svg", alt: "LinkedIn", name: "LinkedIn" },
-        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat" }
+        { src: "/xIcon.svg", alt: "X", name: "X", url: "https://x.com/printdotsa" },
+        { src: "/facebookIcon.svg", alt: "Facebook", name: "Facebook", url: "https://www.facebook.com/PrintDotSa/" },
+        { src: "/instagramIcon.svg", alt: "Instagram", name: "Instagram", url: "https://www.instagram.com/printdotsa" },
+        { src: "/linkedinIcon.svg", alt: "LinkedIn", name: "LinkedIn", url: "https://www.linkedin.com" },
+        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" }
     ]
+
+    const appStoreLink = "https://apps.apple.com/sa/app/%D8%A7%D8%B7%D8%A8%D8%B9-print-sa/id1513699123"
+    const playStoreLink = "https://play.google.com/store/apps/details?id=com.print.printing.android&pli=1"
 
     return (
         <footer className='general-container bg-white py-8 lg:py-4 relative overflow-hidden'>
@@ -65,8 +68,11 @@ const Footer = () => {
                             {/* Enhanced Social Icons */}
                             <div className='flex items-center gap-1'>
                                 {socialIcons.map((icon, index) => (
-                                    <div
+                                    <Link
                                         key={index}
+                                        href={icon.url}
+                                        target='_blank'
+                                        rel='noopener noreferrer'
                                         className="group cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
                                         style={{
                                             animation: mounted ? `fadeInUp 0.6s ease-out ${index * 0.1}s both` : 'none'
@@ -83,7 +89,7 @@ const Footer = () => {
                                             {/* Hover ring effect */}
                                             <div className="absolute inset-0 rounded-full border-2 border-[#7745A2]/20 scale-0 group-hover:scale-100 transition-transform duration-300"></div>
                                         </div>
-                                    </div>
+                                    </Link>
                                 ))}
                             </div>
                         </div>
@@ -100,7 +106,7 @@ const Footer = () => {
                         <div className='flex items-center gap-[9.22px] lg:gap-[10.91px]'>
                             {/* App Store Button */}
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
-                                <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                                <Link href={appStoreLink} target='_blank' rel='noopener noreferrer' className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={locale === "ar" ? "/app-store-ar.png" : "/app-store-en.png"}
                                         alt={t('appStoreAlt')}
@@ -110,12 +116,12 @@ const Footer = () => {
                                     />
                                     {/* Shimmer effect on hover */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-                                </div>
+                                </Link>
                             </div>
 
                             {/* Play Store Button */}
                             <div className="group cursor-pointer transform transition-all duration-300 hover:scale-[102%] hover:-translate-y-0.5 active:scale-95">
-                                <div className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
+                                <Link href={playStoreLink} target='_blank' rel="noopener noreferrer" className="relative overflow-hidden rounded-xl transition-all duration-300 group-hover:shadow-lg group-hover:shadow-purple-200/30">
                                     <Image
                                         src={locale === "ar" ? "/play-store-ar.png" : "/play-store-en.png"}
                                         alt={t('playStoreAlt')}
@@ -125,7 +131,7 @@ const Footer = () => {
                                     />
                                     {/* Shimmer effect on hover */}
                                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-out"></div>
-                                </div>
+                                </Link>
                             </div>
                         </div>
 
