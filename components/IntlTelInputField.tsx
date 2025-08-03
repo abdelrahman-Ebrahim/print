@@ -36,10 +36,41 @@ const PhoneInput = ({
 }: PhoneInputProps) => {
     const telInputRef = useRef<IntlTelInputRef>(null);
     const [isClient, setIsClient] = useState(false);
+    const [internalError, setInternalError] = useState<string>("");
     const locale = useLocale();
 
     useEffect(() => {
         setIsClient(true);
+    }, []);
+
+    const getRequiredMessage = () => {
+        return locale === "ar" ? "رقم الجوال مطلوب" : "Phone is required";
+    };
+
+    const checkIfEmpty = useCallback(() => {
+        if (telInputRef.current) {
+            try {
+                const instance = telInputRef.current.getInstance();
+                if (instance) {
+                    const fullNumber = instance.getNumber();
+                    const countryData = instance.getSelectedCountryData();
+
+                    // Check if there's only country code but no actual number
+                    if (fullNumber && countryData) {
+                        const countryCode = countryData.dialCode;
+                        const numberWithoutCountryCode = fullNumber.replace(`+${countryCode}`, '').replace(/\s+/g, '').replace(/[^\d]/g, '');
+
+                        return numberWithoutCountryCode.length === 0;
+                    }
+
+                    // If no full number, check if there's any input
+                    return !fullNumber || fullNumber.trim().length === 0;
+                }
+            } catch (error) {
+                console.error("Error checking if phone number is empty:", error);
+            }
+        }
+        return true; // Consider empty if we can't determine
     }, []);
 
     const handleChange = useCallback(() => {
@@ -48,6 +79,16 @@ const PhoneInput = ({
                 const instance = telInputRef.current.getInstance();
                 if (instance) {
                     const fullNumber = instance.getNumber()?.replace(/\s+/g, "") || "";
+
+                    // Check if phone is empty (only country code)
+                    const isEmpty = checkIfEmpty();
+
+                    if (isEmpty && touched) {
+                        setInternalError(getRequiredMessage());
+                    } else {
+                        setInternalError("");
+                    }
+
                     return fullNumber;
                 }
             } catch (error) {
@@ -55,11 +96,15 @@ const PhoneInput = ({
             }
         }
         return value;
-    }, [value]);
+    }, [value, checkIfEmpty, touched, locale]);
 
     const handleValidationChange = useCallback((valid: boolean) => {
-        onValidationChange?.(valid);
-    }, [onValidationChange]);
+        // Also check our custom validation
+        const isEmpty = checkIfEmpty();
+        const finalValid = valid && !isEmpty;
+
+        onValidationChange?.(finalValid);
+    }, [onValidationChange, checkIfEmpty]);
 
     const handleNumberChange = useCallback(() => {
         const newValue = handleChange();
@@ -67,6 +112,14 @@ const PhoneInput = ({
             onChange(newValue);
         }
     }, [handleChange, onChange, value]);
+
+    // Handle blur event to trigger validation when user leaves the field
+    const handleBlur = useCallback(() => {
+        const isEmpty = checkIfEmpty();
+        if (isEmpty) {
+            setInternalError(getRequiredMessage());
+        }
+    }, [checkIfEmpty, locale]);
 
     if (!isClient) {
         return (
@@ -79,6 +132,10 @@ const PhoneInput = ({
         );
     }
 
+    // Use internal error if present, otherwise use external error
+    const displayError = internalError || error;
+    const hasError = touched && displayError;
+
     return (
         <div className="flex flex-col justify-start items-start w-full gap-2 form-element">
             <label
@@ -88,13 +145,13 @@ const PhoneInput = ({
                 {label}
             </label>
             <div className="relative w-full">
-                <div className={`form-input ${touched && error ? "!border-[#FB7185]" : ""}`}>
+                <div className={`form-input ${hasError ? "!border-[#FB7185]" : ""}`}>
                     <IntlTelInput
                         ref={telInputRef}
                         initialValue={value}
                         onChangeNumber={handleNumberChange}
                         onChangeValidity={handleValidationChange}
-                        onChangeErrorCode={() => {}} // Empty handler to satisfy the prop requirement
+                        onChangeErrorCode={() => { }} // Empty handler to satisfy the prop requirement
                         initOptions={{
                             initialCountry: initialCountry,
                             separateDialCode: true,
@@ -107,12 +164,13 @@ const PhoneInput = ({
                             className: `border-none w-full h-auto focus:outline-none placeholder:text-[#525252] bg-transparent px-[17px] pt-[13.5px] pb-[14px] ${locale === "ar" ? "text-right" : "text-left"
                                 } ${additionalClasses}`,
                             dir: locale === "ar" ? "ltr" : "ltr",
-                            placeholder: placeholder
+                            placeholder: placeholder,
+                            onBlur: handleBlur
                         }}
                     />
                 </div>
-                {touched && error && (
-                    <p className="text-red-500 text-xs mt-1">{error}</p>
+                {hasError && (
+                    <p className="text-red-500 text-xs mt-1">{displayError}</p>
                 )}
             </div>
         </div>
