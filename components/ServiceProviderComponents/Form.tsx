@@ -7,6 +7,7 @@ import axios from "axios";
 import "./form-animations.css";
 import { getRecaptchaToken } from '../RecaptchaProvider';
 import PhoneInput from '../IntlTelInputField';
+import type { PhoneInputRef } from '../IntlTelInputField';
 import {
     fetchCountries,
     fetchCitiesForCountry,
@@ -214,6 +215,9 @@ const SearchableDropdown = ({
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
+
+    // Add ref for phone input
+    const phoneInputRef = useRef<PhoneInputRef>(null);
 
     // State for dynamic countries and cities
     const [countries, setCountries] = useState<Array<{
@@ -585,6 +589,10 @@ const Form = () => {
                     password: "",
                     confirmPassword: "",
                 });
+
+                // Reset phone input specifically
+                phoneInputRef.current?.reset();
+
                 setTouched({
                     name: false,
                     mobile: false,
@@ -677,6 +685,7 @@ const Form = () => {
 
                     <div className="w-full md:w-1/2 px-3 mb-6">
                         <PhoneInput
+                            ref={phoneInputRef}
                             value={formData.mobile}
                             onChange={handlePhoneChange}
                             onValidationChange={handlePhoneValidation}

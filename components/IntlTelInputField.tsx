@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef } from "react";
 import dynamic from "next/dynamic";
 import "intl-tel-input/styles";
 import { useLocale } from "next-intl";
@@ -23,7 +23,11 @@ interface PhoneInputProps {
     additionalClasses?: string;
 }
 
-const PhoneInput = ({
+export interface PhoneInputRef {
+    reset: () => void;
+}
+
+const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
     value = "",
     onChange,
     onValidationChange,
@@ -33,15 +37,61 @@ const PhoneInput = ({
     touched,
     placeholder = "",
     additionalClasses,
-}: PhoneInputProps) => {
+}, ref) => {
     const telInputRef = useRef<IntlTelInputRef>(null);
     const [isClient, setIsClient] = useState(false);
     const [internalError, setInternalError] = useState<string>("");
+    const [shouldReset, setShouldReset] = useState(false);
     const locale = useLocale();
 
     useEffect(() => {
         setIsClient(true);
     }, []);
+
+    // Expose reset method to parent component
+    useImperativeHandle(ref, () => ({
+        reset: () => {
+            setShouldReset(true);
+            setInternalError("");
+            onChange(""); // Clear the value in parent
+        }
+    }), [onChange]);
+
+    // Handle reset without forcing re-render
+    useEffect(() => {
+        if (shouldReset && telInputRef.current) {
+            try {
+                const instance = telInputRef.current.getInstance();
+                if (instance) {
+                    // Clear the input value directly
+                    instance.setNumber("");
+                    // Reset validation state
+                    onValidationChange?.(false);
+                }
+            } catch (error) {
+                console.error("Error resetting phone input:", error);
+            } finally {
+                setShouldReset(false);
+            }
+        }
+    }, [shouldReset, onValidationChange]);
+
+    // Reset when value becomes empty from parent (but not during reset operation)
+    useEffect(() => {
+        if (value === "" && !shouldReset && telInputRef.current) {
+            try {
+                const instance = telInputRef.current.getInstance();
+                if (instance) {
+                    const currentNumber = instance.getNumber();
+                    if (currentNumber && currentNumber.trim() !== "") {
+                        instance.setNumber("");
+                    }
+                }
+            } catch (error) {
+                console.error("Error clearing phone input:", error);
+            }
+        }
+    }, [value, shouldReset]);
 
     const getRequiredMessage = () => {
         return locale === "ar" ? "رقم الجوال مطلوب" : "Phone is required";
@@ -175,6 +225,8 @@ const PhoneInput = ({
             </div>
         </div>
     );
-};
+});
+
+PhoneInput.displayName = "PhoneInput";
 
 export default PhoneInput;
