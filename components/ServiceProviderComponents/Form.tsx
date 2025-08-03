@@ -353,8 +353,8 @@ const Form = () => {
             >
                 {showApiMessage && (
                     <div className={`mb-6 p-4 rounded-lg flex flex-col gap-2 ${isSuccess
-                            ? "bg-green-100 text-green-700"
-                            : "bg-red-100 text-red-700"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
                         }`}>
                         {apiMessage}
                     </div>
@@ -572,30 +572,32 @@ const Form = () => {
                         <label className="form-label block text-sm font-semibold mb-2">
                             {t("password")}
                         </label>
-                        <input
-                            type={showPassword ? "text" : "password"}
-                            name="password"
-                            placeholder={
-                                formData.password === "" && !showPassword
-                                    ? "******"
-                                    : showPassword
-                                        ? t("passwordPlaceholder")
-                                        : ""
-                            }
-                            value={formData.password}
-                            onChange={handleChange}
-                            className={`form-input w-full px-4 py-2 pr-12 ${errors.password ? "border-red-500" : ""
-                                }`}
-                        />
-                        <button
-                            type="button"
-                            className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
-                                } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
-                            onClick={() => setShowPassword((v) => !v)}
-                            tabIndex={-1}
-                        >
-                            {showPassword ? <FaEye /> : <FaEyeSlash />}
-                        </button>
+                        <div className="relative">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                name="password"
+                                placeholder={
+                                    formData.password === "" && !showPassword
+                                        ? "******"
+                                        : showPassword
+                                            ? t("passwordPlaceholder")
+                                            : ""
+                                }
+                                value={formData.password}
+                                onChange={handleChange}
+                                className={`form-input w-full px-4 py-2 pr-12 relative ${errors.password ? "border-red-500" : ""
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
+                                    } top-1/2 -translate-y-1/2 text-black text-2xl focus:outline-none`}
+                                onClick={() => setShowPassword((v) => !v)}
+                                tabIndex={-1}
+                            >
+                                {showPassword ? <FaEye /> : <FaEyeSlash />}
+                            </button>
+                        </div>
                         {errors.password && (
                             <p className="mt-1 text-sm text-red-600">{errors.password}</p>
                         )}
@@ -605,30 +607,32 @@ const Form = () => {
                         <label className="form-label block text-sm font-semibold mb-2">
                             {t("confirmPassword")}
                         </label>
-                        <input
-                            type={showConfirmPassword ? "text" : "password"}
-                            name="confirmPassword"
-                            placeholder={
-                                formData.confirmPassword === "" && !showConfirmPassword
-                                    ? "******"
-                                    : showConfirmPassword
-                                        ? t("confirmPasswordPlaceholder")
-                                        : ""
-                            }
-                            value={formData.confirmPassword}
-                            onChange={handleChange}
-                            className={`form-input w-full px-4 py-2 pr-12 ${errors.confirmPassword ? "border-red-500" : ""
-                                }`}
-                        />
-                        <button
-                            type="button"
-                            className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
-                                } top-[70%] -translate-y-1/2 text-black text-2xl focus:outline-none`}
-                            onClick={() => setShowConfirmPassword((v) => !v)}
-                            tabIndex={-1}
-                        >
-                            {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
-                        </button>
+                        <div className="relative">
+                            <input
+                                type={showConfirmPassword ? "text" : "password"}
+                                name="confirmPassword"
+                                placeholder={
+                                    formData.confirmPassword === "" && !showConfirmPassword
+                                        ? "******"
+                                        : showConfirmPassword
+                                            ? t("confirmPasswordPlaceholder")
+                                            : ""
+                                }
+                                value={formData.confirmPassword}
+                                onChange={handleChange}
+                                className={`form-input w-full px-4 py-2 pr-12 ${errors.confirmPassword ? "border-red-500" : ""
+                                    }`}
+                            />
+                            <button
+                                type="button"
+                                className={`password-toggle absolute ${locale === "ar" ? "left-6" : "right-6"
+                                    } top-1/2 -translate-y-1/2 text-black text-2xl focus:outline-none`}
+                                onClick={() => setShowConfirmPassword((v) => !v)}
+                                tabIndex={-1}
+                            >
+                                {showConfirmPassword ? <FaEye /> : <FaEyeSlash />}
+                            </button>
+                        </div>
                         {errors.confirmPassword && (
                             <p className="mt-1 text-sm text-red-600">{errors.confirmPassword}</p>
                         )}
