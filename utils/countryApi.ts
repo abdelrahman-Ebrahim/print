@@ -1,4 +1,3 @@
-// utils/countryApi.ts
 import axios from 'axios';
 
 export interface Country {
@@ -9,6 +8,11 @@ export interface Country {
 }
 
 export interface City {
+  id: number;
+  name: string;
+}
+
+export interface FormattedCity {
   id: number;
   value: string;
   label: string;
@@ -24,6 +28,14 @@ export interface CountryApiResponse {
     countries: Country[];
     educationalStages: any[];
   };
+}
+
+export interface CitiesApiResponse {
+  status: boolean;
+  show_message: boolean;
+  message: string | null;
+  code: number;
+  data: City[];
 }
 
 /**
@@ -61,6 +73,53 @@ export const fetchCountries = async (locale: string = 'en-US'): Promise<Country[
 };
 
 /**
+ * Fetches the list of cities for a specific country from the API
+ * @param countryId - The country ID to fetch cities for
+ * @param locale - The locale for the request (e.g., 'ar-SA', 'en-US')
+ * @returns Promise<City[]>
+ */
+export const fetchCitiesForCountry = async (countryId: number, locale: string = 'en-US'): Promise<City[]> => {
+  try {
+    const response = await axios.post<CitiesApiResponse>(
+      '/api/cities',
+      {
+        country_id: countryId
+      },
+      {
+        headers: {
+          'Accept-Language': locale === 'ar' ? 'ar-SA' : 'en-US',
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+
+    if (response.data.status && response.data.data) {
+      return response.data.data;
+    } else {
+      throw new Error(response.data.message || 'Failed to fetch cities');
+    }
+  } catch (error) {
+    console.error(`Error fetching cities for country ${countryId}:`, error);
+    // Return fallback cities based on your provided data for Saudi Arabia (country_id: 1)
+    if (countryId === 1) {
+      return [
+        { id: 1, name: "Abha" },
+        { id: 44, name: "Dammam" },
+        { id: 76, name: "Jeddah" },
+        { id: 97, name: "Makkah" },
+        { id: 93, name: "Madinah" },
+        { id: 138, name: "Riyadh" },
+        { id: 165, name: "Taif" },
+        { id: 164, name: "Tabuk" },
+        { id: 60, name: "Hail" },
+        { id: 110, name: "Najran" },
+      ];
+    }
+    return [];
+  }
+};
+
+/**
  * Maps API countries to the format expected by the form
  * @param countries - Array of countries from API
  * @returns Array of countries in form format
@@ -76,30 +135,25 @@ export const mapCountriesToFormFormat = (countries: Country[]) => {
 };
 
 /**
- * Gets cities for a specific country (static for now, can be extended)
- * This should be replaced with an API call if cities endpoint is available
+ * Maps API cities to the format expected by the form
+ * @param cities - Array of cities from API
+ * @param countryId - The country ID to associate with cities
+ * @returns Array of cities in form format
  */
-export const getCitiesForCountry = (countryId: number): City[] => {
-  // Static cities mapping - replace with API call when available
-  const cityMapping: { [key: number]: City[] } = {
-    1: [ // Saudi Arabia
-      { id: 1, value: "riyadh", label: "Riyadh", countryId: 1 },
-      { id: 2, value: "jeddah", label: "Jeddah", countryId: 1 },
-      { id: 3, value: "dammam", label: "Dammam", countryId: 1 },
-      { id: 4, value: "mecca", label: "Mecca", countryId: 1 },
-      { id: 5, value: "medina", label: "Medina", countryId: 1 },
-    ],
-    3: [ // UAE
-      { id: 6, value: "dubai", label: "Dubai", countryId: 3 },
-      { id: 7, value: "abu_dhabi", label: "Abu Dhabi", countryId: 3 },
-      { id: 8, value: "sharjah", label: "Sharjah", countryId: 3 },
-    ],
-    61: [ // Egypt
-      { id: 9, value: "cairo", label: "Cairo", countryId: 61 },
-      { id: 10, value: "alexandria", label: "Alexandria", countryId: 61 },
-      { id: 11, value: "giza", label: "Giza", countryId: 61 },
-    ],
-  };
+export const mapCitiesToFormFormat = (cities: City[], countryId: number): FormattedCity[] => {
+  return cities.map(city => ({
+    id: city.id,
+    value: city.name.toLowerCase().replace(/\s+/g, '_'),
+    label: city.name,
+    countryId: countryId,
+  }));
+};
 
-  return cityMapping[countryId] || [];
+/**
+ * This function is now deprecated since we fetch cities dynamically per country
+ * @deprecated Use fetchCitiesForCountry instead
+ */
+export const getCitiesForCountry = (countryId: number, allCities: FormattedCity[] = []): FormattedCity[] => {
+  console.warn('getCitiesForCountry is deprecated. Use fetchCitiesForCountry instead.');
+  return allCities.filter(city => city.countryId === countryId);
 };

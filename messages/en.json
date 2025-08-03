@@ -101,30 +101,6 @@
     "submitSuccess": "Thank you! Your message has been sent successfully.",
     "sending": "Sending..."
   },
-  "ServiceProvider": {
-    "title": "DO YOU HAVE A PRINTER?",
-    "subtitle": "Join us today and become a service provider on Print.sa",
-    "description": "If You’re A Copy Center Or Print Provider, We’re Glad You Found Us! We Look Forward To Working Together To Offer Top-Quality Online Printing Services For Both Your Customers And Ours.",
-    "form": {
-      "fullName": "Full Name",
-      "fullNamePlaceholder": "Enter your full name",
-      "email": "Email",
-      "emailPlaceholder": "Enter your email",
-      "phone": "Phone",
-      "phonePlaceholder": "Enter your phone number",
-      "service": "Service",
-      "servicePlaceholder": "Enter the service you provide",
-      "message": "Message",
-      "messagePlaceholder": "Enter your message",
-      "submit": "Submit"
-    },
-    "features": [
-      { "title": "Easy To Find New Customers" },
-      { "title": "Clarity Of Orders And Variety Of Options" },
-      { "title": "All Orders Are Prepaid" },
-      { "title": "Service Is Working 24/7" }
-    ]
-  },
   "Footer": {
     "description1": "Get your documents printed, customized,",
     "description2": "and delivered all from your phone.",
@@ -296,6 +272,7 @@
     "submit": "Submit",
     "submitting": "Submitting...",
     "successMessage": "Your request has been submitted successfully! We will contact you soon.",
+    "search": "Search",
     "errors": {
       "nameRequired": "Name is required",
       "mobileRequired": "Mobile number is required",
@@ -313,14 +290,7 @@
       "passwordsDontMatch": "Passwords don't match",
       "submissionFailed": "Registration failed. Please try again.",
       "networkError": "Network error. Please check your connection."
-    },
-    "country_sa": "Saudi Arabia",
-    "country_eg": "Egypt",
-    "country_ae": "UAE",
-    "city_riyadh": "Riyadh",
-    "city_jeddah": "Jeddah",
-    "city_cairo": "Cairo",
-    "city_dubai": "Dubai"
+    }
   },
   
   "validation": {

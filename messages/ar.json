@@ -266,6 +266,7 @@
     "submitting": "جاري الإرسال...",
     "retry": "إعادة المحاولة",
     "successMessage": "تم إرسال طلبك بنجاح! سنقوم بالتواصل معك قريباً.",
+    "search":"بحث",
     "errors": {
       "nameRequired": "الاسم مطلوب",
       "mobileRequired": "رقم الجوال مطلوب",
@@ -283,14 +284,7 @@
       "passwordsDontMatch": "كلمتا المرور غير متطابقتين",
       "submissionFailed": "فشل التسجيل. يرجى المحاولة مرة أخرى.",
       "networkError": "خطأ في الشبكة. يرجى التحقق من اتصالك."
-    },
-    "country_sa": "المملكة العربية السعودية",
-    "country_eg": "مصر",
-    "country_ae": "الإمارات العربية المتحدة",
-    "city_riyadh": "الرياض",
-    "city_jeddah": "جدة",
-    "city_cairo": "القاهرة",
-    "city_dubai": "دبي"
+    }
   },
  
   "validation": {

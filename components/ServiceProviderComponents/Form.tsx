@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useTranslations, useLocale } from "next-intl";
 import { IoSend } from "react-icons/io5";
@@ -7,16 +7,13 @@ import axios from "axios";
 import "./form-animations.css";
 import { getRecaptchaToken } from '../RecaptchaProvider';
 import PhoneInput from '../IntlTelInputField';
-import { fetchCountries, getCitiesForCountry, mapCountriesToFormFormat } from "@/utils/countryApi";
-
-
-// Keep the original cities structure for now, will be filtered by country
-type City = {
-    id: number;
-    value: string;
-    label: string;
-    countryId: number;
-};
+import {
+    fetchCountries,
+    fetchCitiesForCountry,
+    mapCountriesToFormFormat,
+    mapCitiesToFormFormat,
+    type FormattedCity
+} from "@/utils/countryApi";
 
 type FormData = {
     name: string;
@@ -49,11 +46,176 @@ interface ApiResponse {
     data: null | any;
 }
 
+interface DropdownOption {
+    id: number;
+    label: string;
+    value: string;
+}
+
+interface SearchableDropdownProps {
+    options: DropdownOption[];
+    value: number;
+    onChange: (value: number) => void;
+    placeholder: string;
+    error?: string;
+    disabled?: boolean;
+    isOpen: boolean;
+    onToggle: () => void;
+    onClose: () => void;
+    t: ReturnType<typeof useTranslations>;
+}
+
+const SearchableDropdown = ({
+    options,
+    value,
+    onChange,
+    placeholder,
+    error,
+    disabled,
+    isOpen,
+    onToggle,
+    onClose,
+    t
+}: SearchableDropdownProps) => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredOptions, setFilteredOptions] = useState(options);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
+
+    // Filter options based on search term
+    useEffect(() => {
+        if (searchTerm) {
+            const filtered = options.filter(option =>
+                option.label.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredOptions(filtered);
+        } else {
+            setFilteredOptions(options);
+        }
+    }, [searchTerm, options]);
+
+    // Reset search when dropdown closes
+    useEffect(() => {
+        if (!isOpen) {
+            setSearchTerm("");
+        } else if (searchInputRef.current) {
+            // Focus search input when dropdown opens
+            setTimeout(() => {
+                searchInputRef.current?.focus();
+            }, 0);
+        }
+    }, [isOpen]);
+
+    // Handle clicks outside dropdown
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                onClose();
+            }
+        };
+
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen, onClose]);
+
+    const selectedOption = options.find(option => option.id === value);
+
+    const handleOptionClick = (optionValue: number) => {
+        onChange(optionValue);
+        onClose();
+    };
+
+    return (
+        <div className="relative" ref={dropdownRef}>
+            <div
+                className={`form-select w-full px-4 py-2 cursor-pointer flex items-center justify-between ${error ? "border-red-500" : ""
+                    } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={disabled ? undefined : onToggle}
+            >
+                <span className={selectedOption ? "text-black" : "text-gray-400"}>
+                    {selectedOption ? selectedOption.label : placeholder}
+                </span>
+                <span className="pointer-events-none">
+                    <svg
+                        width="22"
+                        height="22"
+                        viewBox="0 0 22 22"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        style={{
+                            transition: "transform 0.2s",
+                            transform: isOpen ? "rotate(180deg)" : "none",
+                        }}
+                    >
+                        <circle
+                            cx="11"
+                            cy="11"
+                            r="9.5"
+                            stroke="#1A2134"
+                            strokeWidth="1.5"
+                            fill="none"
+                        />
+                        <path
+                            d="M7.5 10l3.5 3 3.5-3"
+                            stroke="#1A2134"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                        />
+                    </svg>
+                </span>
+            </div>
+
+            {isOpen && !disabled && (
+                <div className="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-64 overflow-hidden">
+                    {/* Search Input */}
+                    <div className="p-3 border-b border-gray-200">
+                        <input
+                            ref={searchInputRef}
+                            type="text"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            placeholder={`${t("search")} ${placeholder.toLowerCase()}...`}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-[0.1px] focus:ring-[#7745A2] focus:border-[0.1px] focus:border-[#7745A2]"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
+
+                    {/* Options List */}
+                    <div className="max-h-48 overflow-y-auto">
+                        {filteredOptions.length > 0 ? (
+                            filteredOptions.map((option) => (
+                                <div
+                                    key={option.id}
+                                    className={`px-4 py-3 cursor-pointer transition-colors ${option.id === value ? "bg-[#7745A2] text-white hover:bg-[#7745A2]" : " hover:bg-gray-100"
+                                        }`}
+                                    onClick={() => handleOptionClick(option.id)}
+                                >
+                                    {option.label}
+                                </div>
+                            ))
+                        ) : (
+                            <div className="px-4 py-3 text-gray-500 text-center">
+                                No results found
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Form = () => {
     const t = useTranslations("ServiceProviderForm");
     const locale = useLocale();
 
-    // State for dynamic countries
+    // State for dynamic countries and cities
     const [countries, setCountries] = useState<Array<{
         id: number;
         value: string;
@@ -62,7 +224,7 @@ const Form = () => {
         has_university: boolean;
     }>>([]);
     const [isLoadingCountries, setIsLoadingCountries] = useState(true);
-    // const [cities, setCities] = useState<City[]>([]);
+    const [isLoadingCities, setIsLoadingCities] = useState(false);
 
     const [formData, setFormData] = useState<FormData>({
         name: "",
@@ -80,11 +242,11 @@ const Form = () => {
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isCountryOpen, setIsCountryOpen] = useState(false);
     const [isCityOpen, setIsCityOpen] = useState(false);
-    const [filteredCities, setFilteredCities] = useState<City[]>([]);
+    const [filteredCities, setFilteredCities] = useState<FormattedCity[]>([]);
     const [apiMessage, setApiMessage] = useState('');
     const [submitError, setSubmitError] = useState('');
     const [showApiMessage, setShowApiMessage] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false); // New state to track success
+    const [isSuccess, setIsSuccess] = useState(false);
     const [isPhoneValid, setIsPhoneValid] = useState(false);
     const [touched, setTouched] = useState({
         name: false,
@@ -105,9 +267,32 @@ const Form = () => {
                 const fetchedCountries = await fetchCountries(locale);
                 const mappedCountries = mapCountriesToFormFormat(fetchedCountries);
                 setCountries(mappedCountries);
+
+                // Set the first country as default if available
+                if (mappedCountries.length > 0) {
+                    const firstCountry = mappedCountries[0];
+                    setFormData(prev => ({ ...prev, country: firstCountry.id }));
+
+                    // Load cities for the first country
+                    setIsLoadingCities(true);
+                    try {
+                        const fetchedCities = await fetchCitiesForCountry(firstCountry.id, locale);
+                        const mappedCities = mapCitiesToFormFormat(fetchedCities, firstCountry.id);
+                        setFilteredCities(mappedCities);
+
+                        // Set the first city as default if available
+                        if (mappedCities.length > 0) {
+                            setFormData(prev => ({ ...prev, city: mappedCities[0].id }));
+                        }
+                    } catch (error) {
+                        console.error('Failed to load cities for default country:', firstCountry.id, error);
+                        setFilteredCities([]);
+                    } finally {
+                        setIsLoadingCities(false);
+                    }
+                }
             } catch (error) {
                 console.error('Failed to load countries:', error);
-                // Fallback countries are already handled in fetchCountries
             } finally {
                 setIsLoadingCountries(false);
             }
@@ -116,7 +301,7 @@ const Form = () => {
         loadCountries();
     }, [locale]);
 
-    const handleChange = (
+    const handleChange = async (
         e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
     ) => {
         const { name, value } = e.target;
@@ -124,23 +309,42 @@ const Form = () => {
         setFormData((prev) => {
             const newData = { ...prev, [name]: value };
 
+            // Reset city when country changes
             if (name === "country") {
-                const selectedCountry = Number(value);
-                const newCities = selectedCountry
-                    ? getCitiesForCountry(selectedCountry)
-                    : [];
-                setFilteredCities(newCities);
-
-                if (selectedCountry && newData.city) {
-                    const cityExists = newCities.some((c) => c.id === newData.city);
-                    if (!cityExists) {
-                        newData.city = 0;
-                    }
-                }
+                newData.city = 0;
             }
 
             return newData;
         });
+
+        // Handle country change - fetch cities for the selected country
+        if (name === "country") {
+            const selectedCountry = Number(value);
+
+            if (selectedCountry) {
+                setIsLoadingCities(true);
+                setFilteredCities([]); // Clear current cities
+
+                try {
+                    const fetchedCities = await fetchCitiesForCountry(selectedCountry, locale);
+                    const mappedCities = mapCitiesToFormFormat(fetchedCities, selectedCountry);
+                    setFilteredCities(mappedCities);
+
+                    // Set the first city as default for the newly selected country
+                    if (mappedCities.length > 0) {
+                        setFormData(prev => ({ ...prev, city: mappedCities[0].id }));
+                    }
+                } catch (error) {
+                    console.error('Failed to load cities for country:', selectedCountry, error);
+                    setFilteredCities([]);
+                } finally {
+                    setIsLoadingCities(false);
+                }
+            } else {
+                setFilteredCities([]);
+                setIsLoadingCities(false);
+            }
+        }
 
         // Mark field as touched
         setTouched(prev => ({
@@ -150,6 +354,75 @@ const Form = () => {
 
         if (errors[name as keyof FormErrors]) {
             setErrors((prev) => ({ ...prev, [name]: undefined }));
+        }
+    };
+
+    // Handle country dropdown change
+    const handleCountryChange = async (countryId: number) => {
+        setFormData(prev => ({
+            ...prev,
+            country: countryId,
+            city: 0 // Reset city when country changes
+        }));
+
+        // Mark as touched
+        setTouched(prev => ({
+            ...prev,
+            country: true
+        }));
+
+        // Clear country error
+        if (errors.country) {
+            setErrors(prev => ({
+                ...prev,
+                country: undefined
+            }));
+        }
+
+        // Load cities for selected country
+        if (countryId) {
+            setIsLoadingCities(true);
+            setFilteredCities([]);
+
+            try {
+                const fetchedCities = await fetchCitiesForCountry(countryId, locale);
+                const mappedCities = mapCitiesToFormFormat(fetchedCities, countryId);
+                setFilteredCities(mappedCities);
+
+                // Set the first city as default for the newly selected country
+                if (mappedCities.length > 0) {
+                    setFormData(prev => ({ ...prev, city: mappedCities[0].id }));
+                }
+            } catch (error) {
+                console.error('Failed to load cities for country:', countryId, error);
+                setFilteredCities([]);
+            } finally {
+                setIsLoadingCities(false);
+            }
+        } else {
+            setFilteredCities([]);
+        }
+    };
+
+    // Handle city dropdown change
+    const handleCityChange = (cityId: number) => {
+        setFormData(prev => ({
+            ...prev,
+            city: cityId
+        }));
+
+        // Mark as touched
+        setTouched(prev => ({
+            ...prev,
+            city: true
+        }));
+
+        // Clear city error
+        if (errors.city) {
+            setErrors(prev => ({
+                ...prev,
+                city: undefined
+            }));
         }
     };
 
@@ -232,7 +505,7 @@ const Form = () => {
         setApiMessage('');
         setSubmitError('');
         setShowApiMessage(false);
-        setIsSuccess(false); // Reset success state
+        setIsSuccess(false);
         setErrors((prev) => ({ ...prev, api: undefined }));
     };
 
@@ -294,17 +567,21 @@ const Form = () => {
             if (data.message) {
                 setApiMessage(data.message);
                 setShowApiMessage(true);
-                setIsSuccess(data.status); // Set success state based on API response
+                setIsSuccess(data.status);
             }
 
             if (data.status) {
+                // Reset form to initial state with defaults
+                const firstCountry = countries.length > 0 ? countries[0] : null;
+                const firstCity = filteredCities.length > 0 ? filteredCities[0] : null;
+
                 setFormData({
                     name: "",
                     mobile: "",
                     email: "",
                     commercial_name: "",
-                    country: 0,
-                    city: 0,
+                    country: firstCountry ? firstCountry.id : 0,
+                    city: firstCity ? firstCity.id : 0,
                     password: "",
                     confirmPassword: "",
                 });
@@ -318,13 +595,13 @@ const Form = () => {
                     password: false,
                     confirmPassword: false,
                 });
-                setFilteredCities([]);
+                // Don't clear filtered cities if we have defaults
             }
         } catch (error: any) {
             if (error.response?.data?.message) {
                 setApiMessage(error.response.data.message);
                 setShowApiMessage(true);
-                setIsSuccess(false); // Ensure it's marked as error
+                setIsSuccess(false);
             } else {
                 setSubmitError(
                     error instanceof Error ? error.message : t("errors.networkError")
@@ -334,6 +611,19 @@ const Form = () => {
             setIsSubmitting(false);
         }
     };
+
+    // Convert data for dropdown components
+    const countryOptions = countries.map(country => ({
+        id: country.id,
+        label: country.label,
+        value: country.value
+    }));
+
+    const cityOptions = filteredCities.map(city => ({
+        id: city.id,
+        label: city.label,
+        value: city.value
+    }));
 
     return (
         <div className="mx-auto mt-10 max-w-6xl">
@@ -385,7 +675,6 @@ const Form = () => {
                         )}
                     </div>
 
-                    {/* Updated Mobile Input using PhoneInput component */}
                     <div className="w-full md:w-1/2 px-3 mb-6">
                         <PhoneInput
                             value={formData.mobile}
@@ -436,133 +725,43 @@ const Form = () => {
                         )}
                     </div>
 
-                    <div className="w-full md:w-1/2 px-3 mb-6 relative">
+                    <div className="w-full md:w-1/2 px-3 mb-6">
                         <label className="form-label block text-sm font-semibold mb-2">
                             {t("country")}
                         </label>
-                        <div className="relative">
-                            <select
-                                name="country"
-                                value={formData.country}
-                                onChange={handleChange}
-                                onFocus={() => setIsCountryOpen(true)}
-                                onBlur={() => setIsCountryOpen(false)}
-                                className={`form-select w-full px-4 py-2 appearance-none ${errors.country ? "border-red-500" : ""
-                                    }`}
-                                style={{
-                                    WebkitAppearance: "none",
-                                    MozAppearance: "none",
-                                    appearance: "none",
-                                }}
-                                disabled={isLoadingCountries}
-                            >
-                                <option value={0}>
-                                    {isLoadingCountries ? "Loading countries..." : t("countryPlaceholder")}
-                                </option>
-                                {countries.map((country) => (
-                                    <option key={country.id} value={country.id}>
-                                        {country.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <span
-                                className={`pointer-events-none absolute ${locale === "ar" ? "left-5" : "right-5"
-                                    } top-1/2 -translate-y-1/2`}
-                            >
-                                <svg
-                                    width="22"
-                                    height="22"
-                                    viewBox="0 0 22 22"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    style={{
-                                        transition: "transform 0.2s",
-                                        transform: isCountryOpen ? "rotate(180deg)" : "none",
-                                    }}
-                                >
-                                    <circle
-                                        cx="11"
-                                        cy="11"
-                                        r="9.5"
-                                        stroke="#1A2134"
-                                        strokeWidth="1.5"
-                                        fill="none"
-                                    />
-                                    <path
-                                        d="M7.5 10l3.5 3 3.5-3"
-                                        stroke="#1A2134"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </span>
-                        </div>
+                        <SearchableDropdown
+                            options={countryOptions}
+                            value={formData.country}
+                            onChange={handleCountryChange}
+                            placeholder={t("country")}
+                            error={errors.country}
+                            disabled={isLoadingCountries}
+                            isOpen={isCountryOpen}
+                            onToggle={() => setIsCountryOpen(!isCountryOpen)}
+                            onClose={() => setIsCountryOpen(false)}
+                            t={t}
+                        />
                         {errors.country && (
                             <p className="mt-1 text-sm text-red-600">{errors.country}</p>
                         )}
                     </div>
 
-                    <div className="w-full md:w-1/2 px-3 mb-6 relative">
+                    <div className="w-full md:w-1/2 px-3 mb-6">
                         <label className="form-label block text-sm font-semibold mb-2">
                             {t("city")}
                         </label>
-                        <div className="relative">
-                            <select
-                                name="city"
-                                value={formData.city}
-                                onChange={handleChange}
-                                onFocus={() => setIsCityOpen(true)}
-                                onBlur={() => setIsCityOpen(false)}
-                                className={`form-select w-full px-4 py-2 appearance-none ${errors.city ? "border-red-500" : ""
-                                    }`}
-                                style={{
-                                    WebkitAppearance: "none",
-                                    MozAppearance: "none",
-                                    appearance: "none",
-                                }}
-                                disabled={!formData.country}
-                            >
-                                <option value={0}>{t("cityPlaceholder")}</option>
-                                {filteredCities.map((city) => (
-                                    <option key={city.id} value={city.id}>
-                                        {city.label}
-                                    </option>
-                                ))}
-                            </select>
-                            <span
-                                className={`pointer-events-none absolute ${locale === "ar" ? "left-5" : "right-5"
-                                    } top-1/2 -translate-y-1/2`}
-                            >
-                                <svg
-                                    width="22"
-                                    height="22"
-                                    viewBox="0 0 22 22"
-                                    fill="none"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    style={{
-                                        transition: "transform 0.2s",
-                                        transform: isCityOpen ? "rotate(180deg)" : "none",
-                                    }}
-                                >
-                                    <circle
-                                        cx="11"
-                                        cy="11"
-                                        r="9.5"
-                                        stroke="#1A2134"
-                                        strokeWidth="1.5"
-                                        fill="none"
-                                    />
-                                    <path
-                                        d="M7.5 10l3.5 3 3.5-3"
-                                        stroke="#1A2134"
-                                        strokeWidth="1.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-                                </svg>
-                            </span>
-                        </div>
+                        <SearchableDropdown
+                            options={cityOptions}
+                            value={formData.city}
+                            onChange={handleCityChange}
+                            placeholder={t("city")}
+                            error={errors.city}
+                            disabled={!formData.country || isLoadingCities}
+                            isOpen={isCityOpen}
+                            onToggle={() => setIsCityOpen(!isCityOpen)}
+                            onClose={() => setIsCityOpen(false)}
+                            t={t}
+                        />
                         {errors.city && (
                             <p className="mt-1 text-sm text-red-600">{errors.city}</p>
                         )}
@@ -585,7 +784,7 @@ const Form = () => {
                                 }
                                 value={formData.password}
                                 onChange={handleChange}
-                                className={`form-input w-full px-4 py-2 pr-12 relative ${errors.password ? "border-red-500" : ""
+                                className={`form-input w-full px-4 py-2 pe-12 relative ${errors.password ? "border-red-500" : ""
                                     }`}
                             />
                             <button
@@ -620,7 +819,7 @@ const Form = () => {
                                 }
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
-                                className={`form-input w-full px-4 py-2 pr-12 ${errors.confirmPassword ? "border-red-500" : ""
+                                className={`form-input  w-full px-4 py-2 pe-12 ${errors.confirmPassword ? "border-red-500" : ""
                                     }`}
                             />
                             <button
@@ -642,8 +841,8 @@ const Form = () => {
                 <div className="submit-button-container flex items-center mt-4 bg-[#ECECEC] p-1 rounded-full w-[175px] gap-2 cursor-pointer">
                     <button
                         type="submit"
-                        disabled={isSubmitting || isLoadingCountries}
-                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer ${(isSubmitting || isLoadingCountries) ? "opacity-70 cursor-not-allowed" : ""
+                        disabled={isSubmitting || isLoadingCountries || isLoadingCities}
+                        className={`submit-button flex items-center gap-2 rounded-full bg-[#7745A2] px-8 py-2 text-base font-semibold text-white shadow-md transition-all duration-200 cursor-pointer text-nowrap ${(isSubmitting || isLoadingCountries || isLoadingCities) ? "opacity-70 cursor-not-allowed" : ""
                             }`}
                     >
                         {isSubmitting ? t("submitting") : t("submit")}
