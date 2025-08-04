@@ -21,6 +21,7 @@ interface PhoneInputProps {
     touched?: boolean;
     placeholder?: string;
     additionalClasses?: string;
+    required?: boolean;
 }
 
 export interface PhoneInputRef {
@@ -37,6 +38,7 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
     touched,
     placeholder = "",
     additionalClasses,
+    required
 }, ref) => {
     const telInputRef = useRef<IntlTelInputRef>(null);
     const [isClient, setIsClient] = useState(false);
@@ -133,7 +135,8 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
                     // Check if phone is empty (only country code)
                     const isEmpty = checkIfEmpty();
 
-                    if (isEmpty && touched) {
+                    // Only show required error if the field is required
+                    if (isEmpty && touched && required) {
                         setInternalError(getRequiredMessage());
                     } else {
                         setInternalError("");
@@ -146,15 +149,18 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
             }
         }
         return value;
-    }, [value, checkIfEmpty, touched, locale]);
+    }, [value, checkIfEmpty, touched, locale, required]);
 
     const handleValidationChange = useCallback((valid: boolean) => {
         // Also check our custom validation
         const isEmpty = checkIfEmpty();
-        const finalValid = valid && !isEmpty;
+
+        // If field is not required and is empty, consider it valid
+        // If field is required, it must be valid and not empty
+        const finalValid = required ? (valid && !isEmpty) : (isEmpty || valid);
 
         onValidationChange?.(finalValid);
-    }, [onValidationChange, checkIfEmpty]);
+    }, [onValidationChange, checkIfEmpty, required]);
 
     const handleNumberChange = useCallback(() => {
         const newValue = handleChange();
@@ -166,10 +172,11 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
     // Handle blur event to trigger validation when user leaves the field
     const handleBlur = useCallback(() => {
         const isEmpty = checkIfEmpty();
-        if (isEmpty) {
+        // Only show required message if field is required
+        if (isEmpty && required) {
             setInternalError(getRequiredMessage());
         }
-    }, [checkIfEmpty, locale]);
+    }, [checkIfEmpty, locale, required]);
 
     if (!isClient) {
         return (
@@ -208,6 +215,33 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
                             nationalMode: false,
                             i18n: locale === "ar" ? ar : undefined,
                             dropdownContainer: document.body,
+                            countryOrder: [
+                                'sa',
+                                'ae', // United Arab Emirates
+                                'kw', // Kuwait
+                                'qa', // Qatar
+                                'bh', // Bahrain
+                                'om', // Oman
+                                'eg', // Egypt
+
+                                'jo', // Jordan
+                                'lb', // Lebanon
+                                'sy', // Syria
+                                'ps', // Palestine 
+                                'iq', // Iraq
+
+                                'ly', // Libya
+                                'tn', // Tunisia
+                                'dz', // Algeria
+                                'ma', // Morocco
+                                'mr', // Mauritania
+
+                                'sd', // Sudan
+                                'ye', // Yemen
+                                'so', // Somalia
+                                'dj', // Djibouti
+                                'km', // Comoros
+                            ],
                         }}
                         inputProps={{
                             id: "phone-input",

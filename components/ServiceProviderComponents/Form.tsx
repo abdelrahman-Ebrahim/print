@@ -695,6 +695,7 @@ const Form = () => {
                             error={errors.mobile}
                             touched={touched.mobile}
                             additionalClasses="!pt-2 !pb-2"
+                            required={true}
                         />
                     </div>
 
