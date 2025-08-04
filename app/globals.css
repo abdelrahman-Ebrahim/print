@@ -1,43 +1,41 @@
 @import "tailwindcss";
 
 @layer base {
-
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 300;
-    src: url('/fonts/Rubik-Light.ttf') format('truetype');
+    src: url("/fonts/Rubik-Light.ttf") format("truetype");
   }
 
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 400;
-    src: url('/fonts/Rubik-Regular.ttf') format('truetype');
+    src: url("/fonts/Rubik-Regular.ttf") format("truetype");
   }
 
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 500;
-    src: url('/fonts/Rubik-Medium.ttf') format('truetype');
+    src: url("/fonts/Rubik-Medium.ttf") format("truetype");
   }
 
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 600;
-    src: url('/fonts/Rubik-SemiBold.ttf') format('truetype');
+    src: url("/fonts/Rubik-SemiBold.ttf") format("truetype");
   }
 
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 700;
-    src: url('/fonts/Rubik-Bold.ttf') format('truetype');
+    src: url("/fonts/Rubik-Bold.ttf") format("truetype");
   }
-  
+
   @font-face {
-    font-family: 'Rubik';
+    font-family: "Rubik";
     font-weight: 800;
-    src: url('/fonts/Rubik-ExtraBold.ttf') format('truetype');
+    src: url("/fonts/Rubik-ExtraBold.ttf") format("truetype");
   }
-  
 }
 
 /* General Tailwind Classes Rules */
@@ -46,14 +44,14 @@
   --breakpoint-xlg: 1920px;
   --shadow-navbar: 0px 4px 4px 0px #0000000d;
   --shadow-hero: 0px 22.69px 45.38px -10.89px #00000040;
-  --shadow-info: 0px 3.68px 3.68px 0px #7745A21A;
+  --shadow-info: 0px 3.68px 3.68px 0px #7745a21a;
   --shadow-item: 0px 0.53px 0.53px 0px #00000040 inset;
   --shadow-button: 0px 0.79px 1.05px 0px #00000040;
-  --shadow-form: 0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A;
-  --shadow-mobile-navbar: 0px 4px 6px -4px #0000001A, 0px 10px 15px -3px #0000001A;
+  --shadow-form: 0px 4px 6px -4px #0000001a, 0px 10px 15px -3px #0000001a;
+  --shadow-mobile-navbar: 0px 4px 6px -4px #0000001a,
+    0px 10px 15px -3px #0000001a;
   --shadow-join-button: 0px 0.44px 0.44px 0px #00000040 inset;
   --font-rubik: "Rubik", "sans-serif";
-  
 }
 
 
@@ -64,8 +62,6 @@
 .flex-center {
   @apply flex justify-center items-center;
 }
-
-
 
 .custom-swiper-pagination .swiper-pagination {
   margin-top: 24px;
@@ -83,16 +79,32 @@
   opacity: 1;
 }
 
-
-
 /* Phone Input Dropdown Styles */
 .iti--inline-dropdown .iti__dropdown-content {
-    position: absolute;
-    top:0;
-    left: 0;
-    z-index: 2;
-    margin-top: 3px;
-    margin-left: calc(var(--iti-border-width) * -1);
-    border: var(--iti-border-width) solid var(--iti-border-color);
-    box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 2;
+  margin-top: 3px;
+  margin-left: calc(var(--iti-border-width) * -1);
+  border: var(--iti-border-width) solid var(--iti-border-color);
+  box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Phone Input Custom Styling */
+
+.iti__country-container {
+  left: 0 !important;
+}
+
+[dir="rtl"] .iti__arrow {
+  margin-left: 6px !important;
+  margin-right: 0 !important;
+}
+
+.iti input.iti__tel-input,
+.iti input.iti__tel-input[type="text"],
+.iti input.iti__tel-input[type="tel"] {
+  padding-left: 87px !important;
+  padding-right: 0 !important;
 }

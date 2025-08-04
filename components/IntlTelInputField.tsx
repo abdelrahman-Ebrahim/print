@@ -194,10 +194,10 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
     const hasError = touched && displayError;
 
     return (
-        <div className="flex flex-col justify-start items-start w-full gap-2 form-element">
+        <div className="flex flex-col justify-start items-start w-full gap-2 form-element" dir="ltr">
             <label
                 htmlFor="phone-input"
-                className="text-black font-semibold text-sm form-label"
+                className={`text-black font-semibold text-sm form-label ${locale === "ar" ? "self-end" : "self-start"}`}
             >
                 {label}
             </label>
@@ -245,9 +245,7 @@ const PhoneInput = forwardRef<PhoneInputRef, PhoneInputProps>(({
                         }}
                         inputProps={{
                             id: "phone-input",
-                            className: `border-none w-full h-auto focus:outline-none placeholder:text-[#525252] bg-transparent px-[17px] pt-[13.5px] pb-[14px] ${locale === "ar" ? "text-right" : "text-left"
-                                } ${additionalClasses}`,
-                            dir: locale === "ar" ? "ltr" : "ltr",
+                            className: `border-none w-full h-auto focus:outline-none placeholder:text-[#525252] bg-transparent px-[17px] pt-[13.5px] pb-[14px] text-left ${additionalClasses}`,
                             placeholder: placeholder,
                             onBlur: handleBlur
                         }}
