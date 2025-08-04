@@ -8,6 +8,7 @@ import { getRecaptchaToken } from '../RecaptchaProvider'
 import PhoneInput from '../IntlTelInputField'
 
 
+
 interface FormData {
     name: string
     phone: string
@@ -273,7 +274,7 @@ const Contact = () => {
                         className={`text-black font-semibold text-center text-[22px] leading-[26px] lg:text-[28px] xlg:!leading-[45px] xlg:!text-[36px] ${locale === 'ar' ? 'lg:text-right' : 'lg:text-left'}`}
                         data-text={`${t('heading1')} ${t('heading2')}`}
                     >
-                        {t('heading1')} <br /> {t('heading2')}
+                        {t('heading1')} <br />s {t('heading2')}
                     </h2>
 
                     {/* Email Contact Info */}
