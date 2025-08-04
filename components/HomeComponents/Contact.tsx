@@ -292,7 +292,7 @@ const Contact = () => {
                         <div className='w-[48px] h-[48px] rounded-full flex-center bg-[#7745A21A] contact-icon'>
                             <Image src={"/mobile.svg"} alt={t('phoneAlt')} width={24} height={24} />
                         </div>
-                        <p className='text-[#707070] font-medium'>{t('phone')}</p>
+                        <p className='text-[#707070] font-medium' dir='ltr'>{t('phone')}</p>
                         <p className='block text-[#7745A2] font-bold uppercase cursor-pointer lg:hidden'>
                             {t('callNow')}
                         </p>
