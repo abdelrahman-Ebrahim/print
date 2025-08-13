@@ -73,12 +73,6 @@ export async function generateMetadata({
           height: 630,
           alt: seo.title,
         },
-        {
-          url: `${baseUrl}/ndist/images/icon/og/printdotsa_og.png`, // Added baseUrl and fixed path
-          width: 800,
-          height: 600,
-          alt: seo.siteName,
-        }
       ],
     },
 
