@@ -188,7 +188,7 @@ export default async function RootLayout({
                 "contactType": "customer service",
                 "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}`
               }],
-              "logo": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}/dist/ndist/images/icon/og/print_logo_og.png`,
+              "logo": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}/ndist/images/icon/og/print_logo_og.png`,
               "description": seoData[locale as keyof typeof seoData]?.description || seoData.en.description,
               "sameAs": [
                 "https://www.facebook.com/printdotsa",
