@@ -6,9 +6,9 @@ import ServiceProviderAnalytics from "@/components/ServiceProviderComponents/Ser
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ locale: string }>
+  params: { locale: string }
 }): Promise<Metadata> {
-  const { locale } = await params;
+  const { locale } = params;
   
   const serviceProviderSEO = {
     ar: {
