@@ -30,7 +30,7 @@ export async function generateMetadata({
     customTitle: seoData.title,
     customDescription: seoData.description,
     customKeywords: seoData.keywords,
-    customPath: '/service-provider'
+    customPath: '/serviceprovider'
   });
 }
 
