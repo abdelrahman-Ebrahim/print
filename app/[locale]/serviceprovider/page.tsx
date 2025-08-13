@@ -3,16 +3,12 @@ import ServiceProvider from "@/components/ServiceProviderComponents/ServiceProvi
 import { generateSEOMetadata } from "@/lib/metadata";
 import ServiceProviderAnalytics from "@/components/ServiceProviderComponents/ServiceProviderAnalytics";
 
-// Define types for your page
-type GenerateMetadataProps = {
-  params: { locale: string };
-  searchParams: Record<string, string | string[] | undefined>;
-};
-
 export async function generateMetadata({
   params,
-}: GenerateMetadataProps): Promise<Metadata> {
-  const { locale } = params;
+}: {
+  params: Promise<{ locale: string }>
+}): Promise<Metadata> {
+  const { locale } = await params;
   
   const serviceProviderSEO = {
     ar: {
@@ -38,14 +34,12 @@ export async function generateMetadata({
   });
 }
 
-// Define page component props
-interface PageProps {
-  params: { locale: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}
-
-export default function ServiceProviderPage({ params }: PageProps) {
-  const { locale } = params;
+const ServiceProviderPage = async ({ 
+  params 
+}: { 
+  params: Promise<{ locale: string }> 
+}) => {
+  const { locale } = await params;
 
   return (
     <>
@@ -53,4 +47,6 @@ export default function ServiceProviderPage({ params }: PageProps) {
       <ServiceProvider />
     </>
   );
-}
+};
+
+export default ServiceProviderPage;
