@@ -68,7 +68,7 @@ export async function generateMetadata({
       description: seo.description,
       images: [
         {
-          url: `${baseUrl}/dist/img/icon/og/printdotsa_og.png`,
+          url: `${baseUrl}/ndist/images/icon/og/printdotsa_og.png`,
           width: 1200,
           height: 630,
           alt: seo.title,
