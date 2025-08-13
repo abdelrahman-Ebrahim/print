@@ -68,13 +68,13 @@ export async function generateMetadata({
       description: seo.description,
       images: [
         {
-          url: `${baseUrl}/ndist/images/icon/og/printdotsa_og.png`,
+          url: `/ndist/images/icon/og/printdotsa_og.png`,
           width: 1200,
           height: 630,
           alt: seo.title,
         },
         {
-          url: `${baseUrl}/dist/ndist/images/icon/og/print_logo_og.png`,
+          url: `/ndist/images/icon/og/printdotsa_og.png`,
           width: 800,
           height: 600,
           alt: seo.siteName,
