@@ -50,3 +50,28 @@ export function generateWebsiteStructuredData(locale: string): string {
 
   return JSON.stringify(structuredData);
 }
+
+export function generateServiceProviderStructuredData(locale: string): string {
+  const baseUrl = getBaseUrl();
+  
+  const structuredData = {
+    "@context": "https://www.schema.org",
+    "@type": "Service",
+    "name": locale === 'ar' ? "خدمات مقدمي الطباعة" : "Printing Service Provider Program",
+    "description": locale === 'ar' 
+      ? "انضم إلى شبكة مقدمي خدمات الطباعة في منصة اطبع وقدم خدمات الطباعة الرقمية لعملائك"
+      : "Join Print Platform's network of printing service providers and offer digital printing services to your customers",
+    "provider": {
+      "@type": "Corporation",
+      "name": locale === 'ar' ? "منصة اطبع" : "Print Platform",
+      "url": baseUrl
+    },
+    "serviceType": locale === 'ar' ? "خدمات الطباعة التجارية" : "Commercial Printing Services",
+    "areaServed": {
+      "@type": "Country",
+      "name": locale === 'ar' ? "المملكة العربية السعودية" : "Saudi Arabia"
+    }
+  };
+
+  return JSON.stringify(structuredData);
+}
