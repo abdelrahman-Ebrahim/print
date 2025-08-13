@@ -57,7 +57,7 @@ export async function generateMetadata({
       },
     },
 
-    // Open Graph
+    // Fixed Open Graph and Twitter card configuration
     openGraph: {
       type: 'website',
       locale: locale,
@@ -68,13 +68,13 @@ export async function generateMetadata({
       description: seo.description,
       images: [
         {
-          url: `/ndist/images/icon/og/printdotsa_og.png`,
+          url: `${baseUrl}/ndist/images/icon/og/printdotsa_og.png`, // Added baseUrl
           width: 1200,
           height: 630,
           alt: seo.title,
         },
         {
-          url: `/ndist/images/icon/og/printdotsa_og.png`,
+          url: `${baseUrl}/ndist/images/icon/og/printdotsa_og.png`, // Added baseUrl and fixed path
           width: 800,
           height: 600,
           alt: seo.siteName,
@@ -89,7 +89,7 @@ export async function generateMetadata({
       creator: '@printdotsa',
       title: seo.title,
       description: seo.description,
-      images: [`${baseUrl}/dist/img/icon/og/printdotsa_og.png`],
+      images: [`${baseUrl}/ndist/images/icon/og/printdotsa_og.png`], // Fixed path consistency
     },
 
     // Icons and favicons
