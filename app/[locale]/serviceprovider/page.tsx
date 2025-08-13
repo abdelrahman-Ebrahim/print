@@ -3,13 +3,17 @@ import ServiceProvider from "@/components/ServiceProviderComponents/ServiceProvi
 import { generateSEOMetadata } from "@/lib/metadata";
 import ServiceProviderAnalytics from "@/components/ServiceProviderComponents/ServiceProviderAnalytics";
 
+interface PageProps {
+  params: {
+    locale: string;
+  };
+}
+
 export async function generateMetadata({
   params,
-}: {
-  params: { locale: string }
-}): Promise<Metadata> {
+}: PageProps): Promise<Metadata> {
   const { locale } = params;
-  
+
   const serviceProviderSEO = {
     ar: {
       title: "مقدم الخدمة - اطبع | Print",
@@ -24,7 +28,7 @@ export async function generateMetadata({
   };
 
   const seoData = serviceProviderSEO[locale as keyof typeof serviceProviderSEO] || serviceProviderSEO.en;
-  
+
   return generateSEOMetadata({
     locale,
     customTitle: seoData.title,
@@ -34,12 +38,8 @@ export async function generateMetadata({
   });
 }
 
-const ServiceProviderPage = async ({ 
-  params 
-}: { 
-  params: Promise<{ locale: string }> 
-}) => {
-  const { locale } = await params;
+const ServiceProviderPage = ({ params }: PageProps) => {
+  const { locale } = params;
 
   return (
     <>
