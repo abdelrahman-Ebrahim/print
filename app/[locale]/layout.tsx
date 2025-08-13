@@ -33,7 +33,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { locale } = await params
   const seo = seoData[locale as keyof typeof seoData] || seoData.en
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://www.print.sa"
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://print-sandy-seven.vercel.app"
 
   return {
     title: {
@@ -181,14 +181,14 @@ export default async function RootLayout({
               "@context": "https://www.schema.org",
               "@type": "Corporation",
               "name": locale === 'ar' ? "منصة اطبع" : "Print Platform",
-              "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.print.sa'}`,
+              "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}`,
               "contactPoint": [{
                 "@type": "ContactPoint",
                 "email": "support@print.sa",
                 "contactType": "customer service",
-                "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.print.sa'}`
+                "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}`
               }],
-              "logo": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.print.sa'}/dist/ndist/images/icon/og/print_logo_og.png`,
+              "logo": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}/dist/ndist/images/icon/og/print_logo_og.png`,
               "description": seoData[locale as keyof typeof seoData]?.description || seoData.en.description,
               "sameAs": [
                 "https://www.facebook.com/printdotsa",
@@ -206,7 +206,7 @@ export default async function RootLayout({
               "@context": "https://www.schema.org",
               "@type": "WebSite",
               "name": locale === 'ar' ? "منصة اطبع" : "Print Platform",
-              "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.print.sa'}`,
+              "url": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}`,
               "description": seoData[locale as keyof typeof seoData]?.description || seoData.en.description,
               "publisher": {
                 "@type": "Corporation",
@@ -214,7 +214,7 @@ export default async function RootLayout({
               },
               "potentialAction": {
                 "@type": "SearchAction",
-                "target": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://www.print.sa'}/search?q={search_term_string}`,
+                "target": `${process.env.NEXT_PUBLIC_BASE_URL || 'https://print-sandy-seven.vercel.app'}/search?q={search_term_string}`,
                 "query-input": "required name=search_term_string"
               }
             })
