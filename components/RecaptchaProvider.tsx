@@ -11,10 +11,16 @@ declare global {
   }
 }
 
-const RECAPTCHA_SITE_KEY = '6LfMd5ArAAAAAJsui3V7lbDhHz3FooPVhPTnXR63'
+const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ""
 
 export const RecaptchaProvider = () => {
   useEffect(() => {
+    // Validate site key exists
+    if (!RECAPTCHA_SITE_KEY) {
+      console.error('reCAPTCHA site key is not configured. Please check NEXT_PUBLIC_RECAPTCHA_SITE_KEY environment variable.')
+      return
+    }
+
     if (!document.getElementById('recaptcha-v3')) {
       const script = document.createElement('script')
       script.id = 'recaptcha-v3'
@@ -23,9 +29,6 @@ export const RecaptchaProvider = () => {
       script.defer = true
       document.head.appendChild(script)
 
-      script.onload = () => {
-        console.log('reCAPTCHA script loaded successfully')
-      }
       script.onerror = () => {
         console.error('Failed to load reCAPTCHA script')
       }
@@ -37,37 +40,41 @@ export const RecaptchaProvider = () => {
 
 export const getRecaptchaToken = async (action: string): Promise<string> => {
   return new Promise((resolve, reject) => {
+    // Validate site key before execution
+    if (!RECAPTCHA_SITE_KEY) {
+      reject(new Error('reCAPTCHA site key is not configured'))
+      return
+    }
+
     const executeRecaptcha = () => {
       if (window.grecaptcha && window.grecaptcha.execute) {
-        console.log('Executing reCAPTCHA with action:', action)
         window.grecaptcha.execute(RECAPTCHA_SITE_KEY, { action })
           .then(token => {
-            console.log('reCAPTCHA token generated (first 20 chars):', token.substring(0, 20) + '...')
-            console.log('Token length:', token.length)
-            console.log('Token format validation:', /^[A-Za-z0-9_-]+$/.test(token) ? 'Valid' : 'Invalid')
             resolve(token)
           })
           .catch(error => {
-            console.error('reCAPTCHA execution error:', error)
             reject(error)
           })
       } else {
-        const error = new Error('reCAPTCHA not loaded')
-        console.error(error.message)
-        reject(error)
+        reject(new Error('reCAPTCHA not loaded'))
       }
     }
 
     if (window.grecaptcha && window.grecaptcha.ready) {
       window.grecaptcha.ready(executeRecaptcha)
     } else {
-      console.log('reCAPTCHA not ready, waiting for initialization...')
+      // Add timeout to prevent infinite waiting
+      let attempts = 0
+      const maxAttempts = 50 // 5 seconds max wait
+
       const checkRecaptcha = () => {
         if (window.grecaptcha && window.grecaptcha.ready) {
-          console.log('reCAPTCHA is now ready')
           window.grecaptcha.ready(executeRecaptcha)
-        } else {
+        } else if (attempts < maxAttempts) {
+          attempts++
           setTimeout(checkRecaptcha, 100)
+        } else {
+          reject(new Error('reCAPTCHA failed to initialize within timeout'))
         }
       }
       checkRecaptcha()
