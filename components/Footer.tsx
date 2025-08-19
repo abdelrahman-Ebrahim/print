@@ -14,11 +14,11 @@ const Footer = () => {
     }, [])
 
     const socialIcons = [
-        { src: "/xIcon.svg", alt: "X", name: "X", url: "https://x.com/printdotsa" },
         { src: "/facebookIcon.svg", alt: "Facebook", name: "Facebook", url: "https://www.facebook.com/PrintDotSa/" },
+        { src: "/xIcon.svg", alt: "X", name: "X", url: "https://x.com/printdotsa" },
         { src: "/instagramIcon.svg", alt: "Instagram", name: "Instagram", url: "https://www.instagram.com/printdotsa" },
-        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" },
         { src: "/whatsappIcon.svg", alt: "Whatsapp", name: "Whatsapp", url: "https://api.whatsapp.com/send/?phone=966599139318&text&type=phone_number&app_absent=0" },
+        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" },
         { src: "/youtubeIcon.svg", alt: "Youtube", name: "Youtube", url: "https://www.youtube.com/c/PrintDotSa" }
     ]
 

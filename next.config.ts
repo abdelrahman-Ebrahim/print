@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://print.print-dev.com/api/:path*",
+        destination: "https://www.print.sa/mapiv3/api/:path*",
       },
     ];
   },
