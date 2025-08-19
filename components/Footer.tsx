@@ -17,8 +17,9 @@ const Footer = () => {
         { src: "/xIcon.svg", alt: "X", name: "X", url: "https://x.com/printdotsa" },
         { src: "/facebookIcon.svg", alt: "Facebook", name: "Facebook", url: "https://www.facebook.com/PrintDotSa/" },
         { src: "/instagramIcon.svg", alt: "Instagram", name: "Instagram", url: "https://www.instagram.com/printdotsa" },
-        { src: "/linkedinIcon.svg", alt: "LinkedIn", name: "LinkedIn", url: "https://www.linkedin.com/" },
-        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" }
+        { src: "/snapchatIcon.svg", alt: "Snapchat", name: "Snapchat", url: "https://www.snapchat.com/@printdotsa" },
+        { src: "/whatsappIcon.svg", alt: "Whatsapp", name: "Whatsapp", url: "https://api.whatsapp.com/send/?phone=966599139318&text&type=phone_number&app_absent=0" },
+        { src: "/youtubeIcon.svg", alt: "Youtube", name: "Youtube", url: "https://www.youtube.com/c/PrintDotSa" }
     ]
 
     const appStoreLink = "https://apps.apple.com/sa/app/%D8%A7%D8%B7%D8%A8%D8%B9-print-sa/id1513699123"
@@ -151,7 +152,7 @@ const Footer = () => {
                 {/* Enhanced Links Section */}
                 <div className={`flex-center gap-10 transition-all duration-1000 delay-500 ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
                     <Link
-                        href={`/${locale}/terms&conditions`}
+                        href={`/${locale}/terms-and-conditions`}
                         className='group relative underline text-sm text-[#141219] lg:text-[18px] transition-all duration-300 hover:text-[#7745A2] hover:scale-105 active:scale-95'
                     >
                         <span className="relative z-10">{t('terms')}</span>
@@ -161,7 +162,7 @@ const Footer = () => {
                         <div className="absolute bottom-0 left-0 h-0.5 bg-[#7745A2] w-0 group-hover:w-full transition-all duration-300"></div>
                     </Link>
                     <Link
-                        href={`/${locale}/privacypolicy`}
+                        href={`/${locale}/privacy-policy`}
                         className='group relative underline text-sm text-[#141219] lg:text-[18px] transition-all duration-300 hover:text-[#7745A2] hover:scale-105 active:scale-95'
                     >
                         <span className="relative z-10">{t('privacy')}</span>

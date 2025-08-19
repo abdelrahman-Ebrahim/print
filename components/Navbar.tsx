@@ -213,7 +213,7 @@ const Navbar = () => {
                     {/* Desktop Join & Profile */}
                     <div className='items-center gap-6 hidden lg:flex'>
                         <div className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-item transition-all duration-300 hover:scale-[102%]'>
-                            <Link href={`/${locale}/serviceprovider`}
+                            <Link href={`/${locale}/service-provider`}
                                 className='flex items-center gap-[9.21px] cursor-pointer group'
                                 aria-label="Join"
                             >
@@ -319,7 +319,7 @@ const Navbar = () => {
                             {/* Enhanced Mobile Join Button */}
                             <div className="mt-2 group">
                                 <div onClick={closeMenu} className='rounded-full py-[3.95px] ps-[3.95px] pe-[15.79px] flex items-center gap-[2.95px] bg-[#ECECEC] shadow-join-button transition-all duration-300 w-fit'>
-                                    <Link href={`/${locale}/serviceprovider`}
+                                    <Link href={`/${locale}/service-provider`}
                                         className='flex items-center gap-[9.21px] cursor-pointer group/mobile-button'
                                         aria-label="Join"
                                     >
